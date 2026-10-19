@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Debt Tracker">
+<title>Debt Tracker</title>
+<style>
+:root{--bg:#050505;--c1:#0f0f10;--c2:#161617;--bd:#242427;--tx:#f4f4f5;--mut:#8b8b92;--g:#22c55e;--gd:#16a34a;--gs:rgba(34,197,94,.13);--r:#ef4444;--rs:rgba(239,68,68,.13);color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;min-height:100vh}
+svg{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+.w{max-width:760px;margin:0 auto;padding:0 16px}
+.top{position:sticky;top:0;z-index:5;background:rgba(5,5,5,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+.top .w{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em}
+.logo i{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--g),var(--gd));display:grid;place-items:center;color:#021b0b;font-style:normal;font-weight:800;box-shadow:0 0 18px rgba(34,197,94,.45)}
+main{padding:18px 16px 110px}
+.hero{position:relative;overflow:hidden;border:1px solid var(--bd);border-radius:20px;padding:20px;background:radial-gradient(120% 140% at 0% 0%,rgba(34,197,94,.18),transparent 55%),var(--c1);animation:up .6s both}
+.hero .row1{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lbl{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.amt{font-size:clamp(30px,8vw,40px);font-weight:800;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.ring{position:relative;width:72px;height:72px;flex:none}.ring svg{width:72px;height:72px;transform:rotate(-90deg);stroke-width:7}
+.ring circle{fill:none}.ring .bg{stroke:var(--bd)}.ring .fg{stroke:var(--g);stroke-dasharray:163.4;stroke-dashoffset:163.4;transition:stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 5px rgba(34,197,94,.6))}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:15px}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.mini div{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+.mini b{display:block;font-size:16px;margin-top:2px;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;margin:18px 0 12px}
+.search{flex:1;position:relative}.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:17px}
+input,select,textarea{font:inherit;font-size:16px;color:var(--tx);width:100%;background:var(--c1);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;outline:none;transition:.2s}
+.search input{padding-left:40px}select{width:auto;padding-right:10px}
+input:focus,select:focus,textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--gs)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px}.chips::-webkit-scrollbar{display:none}
+.chip,.btn,.fab{position:relative;overflow:hidden;font:inherit;cursor:pointer;transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
+.chip{background:var(--c1);color:var(--mut);border:1px solid var(--bd);border-radius:99px;padding:7px 14px;white-space:nowrap;font-size:14px}
+.chip span{opacity:.6;margin-left:4px}.chip.on{background:var(--g);border-color:var(--g);color:#04210d;font-weight:600;box-shadow:0 0 16px rgba(34,197,94,.35)}
+.btn{background:var(--c2);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:11px 16px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn:hover{border-color:#3a3a3f}.btn:active,.chip:active,.fab:active{transform:scale(.96)}
+.btn.p{background:var(--g);border-color:var(--g);color:#04210d}.btn.p:hover{box-shadow:0 0 20px rgba(34,197,94,.5)}
+.btn.rd{background:var(--rs);border-color:rgba(239,68,68,.4);color:var(--r)}.btn.rd.solid{background:var(--r);color:#fff}
+.btn.sm{padding:8px 12px;font-size:13px}
+.rip{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:rgba(255,255,255,.28);transform:scale(0);animation:rp .6s ease-out forwards;pointer-events:none}
+@keyframes rp{to{transform:scale(5);opacity:0}}
+.item{position:relative;display:block;background:var(--c1);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s}
+.item:hover{transform:translateY(-2px);border-color:rgba(34,197,94,.55);box-shadow:0 8px 26px rgba(34,197,94,.1);background:var(--c2)}
+.item:active{transform:scale(.985)}.item.od{border-left:3px solid var(--r)}
+.anim .item{animation:up .5s both;animation-delay:calc(var(--i)*45ms)}
+.rt{display:flex;align-items:center;gap:12px}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:var(--g);background:var(--gs);border:1px solid rgba(34,197,94,.35);flex:none}
+.mid{flex:1;min-width:0}.mid b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:16px}
+.sub,.mut{color:var(--mut);font-size:13px}
+.rr{text-align:right}.rr b{display:block;font-size:16px;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;margin-top:3px}
+.pill.paid{background:var(--gs);color:var(--g)}.pill.partial{border:1px solid rgba(34,197,94,.5);color:var(--g)}
+.pill.overdue{background:var(--rs);color:var(--r)}.pill.overdue:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--r);animation:pl 1.4s infinite}
+.pill.unpaid{background:var(--c2);color:var(--mut);border:1px solid var(--bd)}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}100%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}
+.bar{height:5px;border-radius:9px;background:var(--bd);margin-top:12px;overflow:hidden}
+.bar div{height:100%;background:linear-gradient(90deg,var(--gd),var(--g));border-radius:9px;transform-origin:left;animation:gr 1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes gr{from{transform:scaleX(0)}}@keyframes up{from{opacity:0;transform:translateY(14px)}}
+.empty{text-align:center;color:var(--mut);padding:50px 16px;animation:up .5s both}.empty svg{font-size:44px;color:var(--g);margin-bottom:8px}
+.sk{height:72px;border-radius:16px;margin-bottom:10px;background:linear-gradient(90deg,var(--c1) 25%,var(--c2) 50%,var(--c1) 75%);background-size:200% 100%;animation:sh 1.3s infinite}@keyframes sh{to{background-position:-200% 0}}
+.fab{position:fixed;right:18px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;border:0;background:var(--g);color:#04210d;font-size:26px;box-shadow:0 8px 26px rgba(34,197,94,.5);display:none;place-items:center;z-index:4}
+@media(max-width:560px){.fab{display:grid}.top .btn.nw{display:none}}
+dialog{position:fixed;left:0;right:0;top:8vh;bottom:auto;margin:0 auto;border:1px solid var(--bd);padding:0;background:var(--c1);color:var(--tx);border-radius:22px;width:min(480px,94vw);max-height:84vh;overflow-y:auto;overscroll-behavior:contain;box-shadow:0 30px 80px rgba(0,0,0,.8)}
+dialog[open]{animation:pop .32s cubic-bezier(.2,.9,.3,1.15)}dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px);animation:fd .25s}
+@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.95)}}@keyframes fd{from{opacity:0}}
+.sheet{padding:20px;position:relative}.sheet h3{margin:0 0 3px;font-size:20px;letter-spacing:-.01em}
+.xb{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:var(--c2);color:var(--mut);cursor:pointer;display:grid;place-items:center;font-size:16px}
+label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 0 6px;text-transform:uppercase;letter-spacing:.07em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.acts{display:flex;gap:8px;margin-top:20px}.acts .btn{flex:1}
+.hd{display:flex;gap:13px;align-items:center;margin:0 36px 12px 0}.hd .av{width:52px;height:52px;font-size:18px}
+.big{font-size:34px;font-weight:800;letter-spacing:-.02em;margin-top:14px;font-variant-numeric:tabular-nums}
+.info{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px}.det{margin-top:8px;display:grid;gap:3px}
+.sec{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;margin-top:22px}
+.tx{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 0;border-bottom:1px solid var(--bd);animation:up .4s both}.tx:last-child{border:0}
+.tx .x{background:none;border:0;color:var(--mut);cursor:pointer;padding:4px 7px;font-size:15px;transition:.15s}.tx .x:hover{color:var(--r);transform:scale(1.2)}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:#fff;color:#050505;font-weight:600;padding:11px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:.3s;z-index:60;max-width:90vw;font-size:14px}
+.toast.on{opacity:1;transform:translate(-50%,0)}.toast.er{background:var(--r);color:#fff}
+.ld{position:fixed;top:0;left:0;height:3px;width:0;background:var(--g);box-shadow:0 0 10px var(--g);z-index:70;transition:width .5s}.ld.on{width:85%}
+.burst{position:fixed;inset:0;pointer-events:none;z-index:80}.burst i{position:absolute;width:8px;height:8px;border-radius:2px;background:var(--c);animation:bs 1s ease-out forwards}
+@keyframes bs{to{transform:translate(var(--dx),var(--dy)) rotate(540deg);opacity:0}}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--c2);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-top:16px;cursor:pointer;user-select:none}
+.sw input{display:none}.sw .tg{width:44px;height:26px;border-radius:99px;background:var(--bd);position:relative;transition:.25s;flex:none}
+.sw .tg:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.25s}
+.sw input:checked+.tg{background:var(--g);box-shadow:0 0 12px rgba(34,197,94,.5)}.sw input:checked+.tg:after{transform:translateX(18px)}
+.ib{overflow:hidden;max-height:0;opacity:0;transition:max-height .4s,opacity .3s}.ib.on{max-height:240px;opacity:1}
+.hbtn{width:38px;height:38px;border-radius:50%;padding:0;font-size:18px}.mailall{width:100%;margin-top:12px}
+.ov{position:absolute;inset:0;z-index:90;background:rgba(10,10,11,.86);backdrop-filter:blur(3px);animation:fd .2s;border-radius:inherit}
+.ov.g{position:fixed;background:rgba(0,0,0,.78)}
+.ovi{position:sticky;top:0;height:min(100%,70vh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px}
+.ov.g .ovi{height:100vh;position:fixed;inset:0}
+.ovi b{font-size:16px;animation:pl2 1.4s ease-in-out infinite}@keyframes pl2{50%{opacity:.55}}
+.spin{width:46px;height:46px;border-radius:50%;border:4px solid var(--bd);border-top-color:var(--g);animation:sp .8s linear infinite!important;box-shadow:0 0 22px rgba(34,197,94,.35)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.mt{display:inline-block;font-size:11px;font-weight:600;padding:1px 9px;border-radius:99px;background:var(--c2);border:1px solid var(--bd);color:var(--tx);margin-left:4px}
+.top{padding-top:env(safe-area-inset-top,0px)}
+a.btn{color:var(--g)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="ld" id="ld"></div>
+<div class="top"><div class="w"><div class="logo"><i>₱</i>Debt Tracker</div><div style="display:flex;gap:8px;align-items:center"><button class="btn sm" id="inst" style="display:none" onclick="doInstall()">Install app</button><button class="btn hbtn" onclick="openSettings()" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="btn p sm nw" onclick="openNew()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New borrower</button></div></div></div>
+<main class="w">
+<div class="hero"><div class="row1"><div><div class="lbl">Outstanding balance</div><div class="amt" id="s3">₱0.00</div><div class="sub" id="s4">&nbsp;</div></div>
+<div class="ring"><svg viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" id="rg" cx="32" cy="32" r="26"/></svg><b id="rt">0%</b></div></div>
+<div class="mini"><div><span class="lbl">Total lent</span><b id="s1">₱0.00</b></div><div><span class="lbl">Collected</span><b id="s2" style="color:var(--g)">₱0.00</b></div></div>
+<button class="btn p mailall" onclick="confirmAll()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span id="mc">Email reminders</span></button></div>
+<div class="tools"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="Search borrowers" oninput="render()"></div>
+<select id="so" onchange="render(1)"><option value="bal">Highest balance</option><option value="name">Name A–Z</option><option value="due">Due soonest</option></select></div>
+<div class="chips" id="chips"></div>
+<div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
+</main>
+<button class="fab" onclick="openNew()" aria-label="New borrower"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+<dialog id="dlg"></dialog><div class="toast" id="toast"></div>
+<script>
+let D=[],filt='all',pending=null,PUR=['Cash','Load'],TMP=[];
+const $=id=>document.getElementById(id);
+const P=n=>'₱'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const sum=a=>a.reduce((s,x)=>s+x.amt,0);
+const tot=p=>sum(p.debts)+(p.interest||0);
+const bal=p=>Math.round((tot(p)-sum(p.payments))*100)/100;
+const LBP={once:'one-time',week:'per week',month:'per month',year:'per year'};
+const st=p=>bal(p)<=0.005?'paid':(p.due&&p.due<today()?'overdue':(sum(p.payments)>0?'partial':'unpaid'));
+const LB={paid:'Paid',overdue:'Overdue',partial:'Partial',unpaid:'Unpaid'};
+const get=id=>D.find(p=>p.id===id);
+const days=p=>Math.round((new Date(p.due+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5);
+const dueTx=p=>{if(!p.due||bal(p)<=0)return'';const d=days(p);return d<0?Math.abs(d)+'d overdue':d===0?'Due today':'Due in '+d+'d'};
+const ini=n=>n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const av=n=>`<div class="av">${E(ini(n))}</div>`;
+const IC={x:'<path d="M18 6L6 18M6 6l12 12"/>',ph:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',ms:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',bk:'<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h5"/>'};
+const I=k=>`<svg viewBox="0 0 24 24">${IC[k]}</svg>`;
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+function toast(m,er){const t=$('toast');t.textContent=m;t.className='toast on'+(er?' er':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2600)}
+function fit(){const v=window.visualViewport,d=$('dlg');if(!v)return;const top=v.height<520?8:Math.min(56,v.height*.07);d.style.top=(v.offsetTop+top)+'px';d.style.maxHeight=(v.height-top-12)+'px'}
+if(window.visualViewport){visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}
+function show(h){$('dlg').innerHTML='<div class="sheet"><button class="xb" onclick="closeDlg()" aria-label="Close">'+I('x')+'</button>'+h+'</div>';if(!$('dlg').open)$('dlg').showModal();fit();$('dlg').scrollTop=0}
+const closeDlg=()=>$('dlg').close();
+$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))closeDlg()});
+document.addEventListener('focusin',e=>{if(e.target.closest&&e.target.closest('dialog'))setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:'smooth'}),350)});
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn,.chip,.fab');if(!b||reduce)return;const r=b.getBoundingClientRect(),s=document.createElement('span');s.className='rip';s.style.left=e.clientX-r.left+'px';s.style.top=e.clientY-r.top+'px';b.appendChild(s);setTimeout(()=>s.remove(),650)});
+function cnt(id,v){const el=$(id),from=el._v||0;el._v=v;if(from===v||reduce){el.textContent=P(v);return}
+  const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);el.textContent=P(from+(v-from)*e);if(k<1)requestAnimationFrame(f)})(t0)}
+function burst(){const c=document.createElement('div');c.className='burst';for(let i=0;i<30;i++){const s=document.createElement('i'),a=Math.random()*6.28,d=90+Math.random()*170;s.style.cssText=`--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-70}px;--c:${i%3?'#22c55e':i%2?'#fff':'#16a34a'};left:50%;top:45%`;c.appendChild(s)}document.body.appendChild(c);setTimeout(()=>c.remove(),1200)}
+
+const BL={saveBorrower:['Saving borrower…'],addTx:['Saving…','Updating the sheet and sending any email.'],deleteTx:['Deleting entry…'],deleteBorrower:['Deleting borrower…'],remindAll:['Sending emails…','This may take a few seconds. Please keep this page open.'],remindOne:['Sending email…','Please wait.']};
+function busy(on,m,sub){
+  document.querySelectorAll('.ov').forEach(e=>e.remove());if(!on)return;
+  const el=document.createElement('div'),d=$('dlg').open;el.className='ov'+(d?'':' g');
+  el.innerHTML=`<div class="ovi"><div class="spin"></div><b>${E(m)}</b>${sub?`<span class="sub">${E(sub)}</span>`:''}</div>`;
+  (d?$('dlg').querySelector('.sheet'):document.body).appendChild(el);
+}
+function showFail(i){
+  const hint=/permission|authori|scope/i.test(i.err)?'Google has not approved email sending for this app yet. In Apps Script, select the function <b>authorizeEmail</b>, click <b>Run</b>, approve the permissions, then go to Deploy → Manage deployments → Edit → New version → Deploy.':'Check that the borrower’s email address is correct, then try again.';
+  show(`<h3>Email problem</h3><div class="mut">${i.sent||0} sent, ${i.failed} failed.</div>
+  <div style="background:var(--rs);border:1px solid rgba(239,68,68,.4);color:var(--r);padding:12px;border-radius:12px;margin-top:12px;font-size:14px;word-break:break-word">${E(i.err)}</div>
+  <div class="sub" style="margin-top:12px;line-height:1.6">${hint}</div><div class="acts"><button class="btn p" onclick="closeDlg()">OK</button></div>`);
+}
+const CFGK='dt_cfg',CACHE='dt_cache';
+const cfg=()=>{try{return JSON.parse(localStorage.getItem(CFGK)||'null')}catch(e){return null}};
+async function api(fn,args){
+  const c=cfg();if(!c||!c.url||!c.key)throw new Error('NOCFG');
+  let r;try{r=await fetch(c.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({key:c.key,fn,args:args||[]})})}
+  catch(e){throw new Error('No connection. Check your internet and try again.')}
+  let j;try{j=await r.json()}catch(e){throw new Error('Unexpected reply. Check the Web App URL and that access is set to Anyone.')}
+  if(!j.ok)throw new Error(j.error||'Unknown error');return j.result;
+}
+function fail(e){
+  if(e.message==='NOCFG')return openConnect();
+  if(e.message==='Unauthorized')return openConnect('Wrong passcode. Please check it and try again.');
+  toast('Error: '+e.message,1);
+}
+function call(fn,args,msg,after){
+  $('ld').className='ld on';const b=BL[fn];if(b)busy(1,b[0],b[1]);
+  api(fn,args).then(d=>{
+    $('ld').className='ld';busy(0);const x=Array.isArray(d)?{data:d}:d;D=x.data;
+    try{localStorage.setItem(CACHE,JSON.stringify(D))}catch(e){}
+    render(fn==='getData');
+    if(x.info&&x.info.failed&&x.info.err)return showFail(x.info);
+    const m=typeof msg==='function'?msg(x.info):msg;m&&toast(m);after&&after();
+  }).catch(e=>{
+    $('ld').className='ld';busy(0);fail(e);
+    if(!D.length&&e.message!=='NOCFG'&&e.message!=='Unauthorized')$('list').innerHTML='<div class="empty">'+I('x')+'<br>Could not load data.<br><br><button class="btn p" onclick="load()">Try again</button></div>';
+  });
+}
+function callS(fn,args,after,msg){
+  $('ld').className='ld on';if(msg)busy(1,msg);
+  api(fn,args).then(x=>{$('ld').className='ld';busy(0);after&&after(x)}).catch(e=>{$('ld').className='ld';busy(0);fail(e)});
+}
+function openConnect(note){
+  const c=cfg()||{};
+  show(`<h3>Connect to your sheet</h3><div class="mut" style="margin-top:6px">Paste your Apps Script Web App URL and the passcode you generated. They are saved only on this device.</div>
+  ${note?`<div style="background:var(--rs);border:1px solid rgba(239,68,68,.4);color:var(--r);padding:10px 12px;border-radius:12px;margin-top:12px;font-size:14px">${E(note)}</div>`:''}
+  <label>Web App URL</label><input id="d1" value="${E(c.url||'')}" placeholder="https://script.google.com/macros/s/…/exec" autocapitalize="off" autocomplete="off">
+  <label>Passcode</label><input id="d2" type="password" value="${E(c.key||'')}" placeholder="Your passcode" autocapitalize="off" autocomplete="off">
+  <div class="acts">${c.url?'<button class="btn rd" onclick="disconnect()">Disconnect</button>':''}<button class="btn p" onclick="saveConn()">Connect</button></div>`);
+}
+function saveConn(){
+  const url=$('d1').value.trim(),key=$('d2').value.trim();
+  if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url))return toast('The URL should end with /exec',1);
+  if(!key)return toast('Enter your passcode.',1);
+  localStorage.setItem(CFGK,JSON.stringify({url,key}));closeDlg();load();loadPur();
+}
+function disconnect(){localStorage.removeItem(CFGK);localStorage.removeItem(CACHE);D=[];render();closeDlg();openConnect()}
+let dip=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;$('inst').style.display='inline-flex'});
+addEventListener('appinstalled',()=>{$('inst').style.display='none'});
+function doInstall(){if(!dip)return;dip.prompt();dip.userChoice.finally(()=>{dip=null;$('inst').style.display='none'})}
+function load(){call('getData',[])}
+function loadPur(){api('getPurposes').then(l=>{if(l&&l.length)PUR=l}).catch(()=>{})}
+function purSel(id){return `<select id="${id}" style="width:100%" onchange="$('${id}n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select><input id="${id}n" placeholder="New category name" style="display:none;margin-top:10px">`}
+function purVal(id){
+  const v=$(id).value;if(v!=='__new')return v;
+  const n=$(id+'n').value.trim();if(!n)return null;
+  if(!PUR.some(x=>x.toLowerCase()===n.toLowerCase())){PUR.push(n);api('savePurposes',[PUR]).catch(()=>{})}
+  return PUR.find(x=>x.toLowerCase()===n.toLowerCase());
+}
+function renderPur(){$('pl').innerHTML=TMP.map((x,i)=>`<span class="mt" style="margin:0 6px 8px 0;padding:5px 6px 5px 12px;font-size:13px">${E(x)} <button style="background:none;border:0;color:var(--mut);cursor:pointer;font-size:14px" onclick="delPur(${i})">✕</button></span>`).join('')}
+function addPur(){const v=$('pn').value.trim();if(!v)return;if(!TMP.some(x=>x.toLowerCase()===v.toLowerCase()))TMP.push(v);$('pn').value='';renderPur()}
+function delPur(i){if(TMP.length<2)return toast('Keep at least one category.',1);TMP.splice(i,1);renderPur()}
+function setFilter(f){filt=f;render(1)}
+
+function render(anim){
+  const q=$('q').value.toLowerCase(),so=$('so').value;
+  const owing=D.filter(p=>bal(p)>0),lent=D.reduce((s,p)=>s+sum(p.debts),0),col=D.reduce((s,p)=>s+sum(p.payments),0);
+  cnt('s3',owing.reduce((s,p)=>s+bal(p),0));cnt('s1',lent);cnt('s2',col);
+  const tl=lent+D.reduce((s,p)=>s+(p.interest||0),0),rate=tl?Math.min(100,col/tl*100):0;$('rg').style.strokeDashoffset=163.4*(1-rate/100);$('rt').textContent=Math.round(rate)+'%';
+  $('s4').textContent=owing.length?owing.length+(owing.length===1?' borrower owes':' borrowers owe')+' you':(D.length?'All settled':'No borrowers yet');
+  const em=owing.filter(p=>p.email).length;$('mc').textContent=em?`Email reminders (${em})`:'Email reminders';
+  const c={all:D.length,owing:owing.length,overdue:D.filter(p=>st(p)==='overdue').length,paid:D.filter(p=>st(p)==='paid').length};
+  $('chips').innerHTML=[['all','All'],['owing','Owing'],['overdue','Overdue'],['paid','Paid']].map(([k,l])=>`<button class="chip ${filt===k?'on':''}" onclick="setFilter('${k}')">${l}<span>${c[k]}</span></button>`).join('');
+  const dk=p=>bal(p)>0&&p.due?p.due:'9';
+  const r=D.filter(p=>(p.name+p.phone+p.address).toLowerCase().includes(q)).filter(p=>filt==='all'||(filt==='owing'?bal(p)>0:st(p)===filt))
+   .sort(so==='name'?(a,b)=>a.name.localeCompare(b.name):so==='due'?(a,b)=>dk(a)<dk(b)?-1:1:(a,b)=>bal(b)-bal(a));
+  $('list').className=anim?'anim':'';
+  $('list').innerHTML=r.length?r.map((p,i)=>{const dt=tot(p),pc=dt?Math.min(100,sum(p.payments)/dt*100):0,d=dueTx(p);
+   return`<div class="item ${st(p)==='overdue'?'od':''}" style="--i:${Math.min(i,10)}" onclick="openDetail('${p.id}')"><div class="rt">${av(p.name)}<div class="mid"><b>${E(p.name)}</b><span class="sub">${E(p.phone||p.address||'No contact info')}${d?' · '+d:''}${p.interest>0?' · +'+P(p.interest)+' interest':''}</span></div><div class="rr"><b>${P(Math.max(bal(p),0))}</b><span class="pill ${st(p)}">${LB[st(p)]}</span></div></div><div class="bar"><div style="width:${pc}%"></div></div></div>`}).join(''):
+   `<div class="empty">${I('bk')}<div>${D.length?'No borrowers match your search.':'No debts recorded yet.<br>Tap “New borrower” to add the first one.'}</div></div>`;
+}
+
+function openNew(){pForm()}
+function tgl(a,b){const c=$(a);c.checked=!c.checked;if(b)$(b).classList.toggle('on',c.checked)}
+function pForm(id){
+  const p=id?get(id):{},n=!id,on=p.rate>0;
+  show(`<h3>${n?'New borrower':'Edit details'}</h3><div class="mut">${n?'Add the person and what they borrowed.':'Update this borrower’s information.'}</div>
+  <label>Full name *</label><input id="a1" value="${E(p.name)}" placeholder="e.g. Juan Dela Cruz" autocomplete="off">
+  <div class="g2"><div><label>Phone</label><input id="a2" value="${E(p.phone)}" inputmode="tel" placeholder="09XX XXX XXXX"></div>
+  <div><label>Due date</label><input id="a4" type="date" value="${E(p.due)}"></div></div>
+  <label>Email (for reminders)</label><input id="a8" type="email" inputmode="email" autocapitalize="off" value="${E(p.email)}" placeholder="name@gmail.com">
+  <label>Address</label><input id="a3" value="${E(p.address)}">
+  <label>Notes</label><textarea id="a5" rows="2">${E(p.notes)}</textarea>
+  ${n?`<div class="g2"><div><label>Amount (₱) *</label><input id="a6" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+  <div><label>What for?</label><select id="a7" style="width:100%" onchange="$('a7n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select></div></div><input id="a7n" placeholder="New category name" style="display:none;margin-top:10px">`:''}
+  <div class="sw" onclick="tgl('a9','ib')"><span><b>Charge interest</b><br><span class="sub">Optional. You set the rate.</span></span><input type="checkbox" id="a9" ${on?'checked':''}><span class="tg"></span></div>
+  <div class="ib ${on?'on':''}" id="ib"><div class="g2"><div><label>Interest rate (%)</label><input id="a10" type="number" min="0" step="0.01" inputmode="decimal" value="${on?p.rate:''}" placeholder="e.g. 5"></div>
+  <div><label>Charged</label><select id="a11" style="width:100%">${[['once','One-time'],['week','Per week'],['month','Per month'],['year','Per year']].map(([v,l])=>`<option value="${v}" ${(p.per||'month')===v?'selected':''}>${l}</option>`).join('')}</select></div></div>
+  <div class="sub" style="margin-top:8px">Simple interest on each loan, added for every completed period since it was borrowed.</div></div>
+  <div class="acts"><button class="btn" onclick="${n?'closeDlg()':`openDetail('${id}')`}">Cancel</button><button class="btn p" onclick="pSave('${id||''}')">Save</button></div>`);
+  if(matchMedia('(pointer:fine)').matches)setTimeout(()=>$('a1').focus(),60);
+}
+function pSave(id){
+  const name=$('a1').value.trim();if(!name)return toast('Please enter a name.',1);
+  const email=$('a8').value.trim();if(email&&!/^\S+@\S+\.\S+$/.test(email))return toast('That email looks invalid.',1);
+  const on=$('a9').checked,rate=parseFloat($('a10').value);if(on&&!(rate>0))return toast('Enter an interest rate.',1);
+  const p={id,name,phone:$('a2').value.trim(),address:$('a3').value.trim(),due:$('a4').value,notes:$('a5').value.trim(),email,rate:on?rate:0,per:$('a11').value};
+  if(!id){p.amt=parseFloat($('a6').value);if(!(p.amt>0))return toast('Enter the amount borrowed.',1);p.item=purVal('a7');if(p.item===null)return toast('Type the new category name.',1)}
+  call('saveBorrower',[p],id?'Details updated':'Borrower added',()=>id?openDetail(id):closeDlg());
+}
+
+function openDetail(id){
+  const p=get(id);if(!p)return closeDlg();
+  const t=[...p.debts.map(x=>({...x,k:'d'})),...p.payments.map(x=>({...x,k:'p'}))].sort((a,b)=>b.date.localeCompare(a.date));
+  const dt=tot(p),pc=dt?Math.min(100,sum(p.payments)/dt*100):0,b=bal(p),d=dueTx(p),ph=p.phone.replace(/[^\d+]/g,'');
+  const msg=encodeURIComponent(`Hi ${p.name}, a friendly reminder about your balance of ${P(b)}${p.due?' due on '+p.due:''}. Thank you!`);
+  const acts=[ph?`<a class="btn sm" href="tel:${E(ph)}">${I('ph')}Call</a>`:'',ph&&b>0?`<a class="btn sm" href="sms:${E(ph)}?body=${msg}">${I('ms')}Text</a>`:'',p.email&&b>0?`<button class="btn sm" onclick="mailOne('${id}')">${I('mail')}Email reminder</button>`:''].join('');
+  show(`<div class="hd">${av(p.name)}<div class="mid"><h3>${E(p.name)}</h3><span class="pill ${st(p)}">${LB[st(p)]}</span> <span class="sub">${d}</span></div></div>
+  ${acts?`<div class="info">${acts}</div>`:''}
+  <div class="det sub">${p.phone?'Phone: '+E(p.phone):''}${p.email?'<br>Email: '+E(p.email):''}${p.address?'<br>Address: '+E(p.address):''}${p.due?'<br>Due: '+E(p.due):''}${p.notes?'<br>Notes: '+E(p.notes):''}${p.lastReminder?'<br>Last emailed: '+E(p.lastReminder):''}</div>
+  <div class="big" style="color:${b>0?'var(--tx)':'var(--g)'}">${P(Math.max(b,0))}</div>
+  <div class="sub">remaining of ${P(dt)} · paid ${P(sum(p.payments))}${p.interest>0?`<br>Includes ${P(p.interest)} interest (${p.rate}% ${LBP[p.per]})`:p.rate>0?`<br>Interest ${p.rate}% ${LBP[p.per]} · none accrued yet`:''}</div><div class="bar"><div style="width:${pc}%"></div></div>
+  <div class="acts"><button class="btn p" onclick="tForm('${id}','p')">Record payment</button><button class="btn" onclick="tForm('${id}','d')">Add debt</button></div>
+  <div class="sec">History</div>${t.map((x,i)=>`<div class="tx" style="animation-delay:${i*40}ms"><div><b>${x.k==='d'?'Debt':'Payment'}</b><br><span class="sub">${E(x.date)}</span>${x.note?` <span class="mt">${E(x.note)}</span>`:''}</div><div><b style="color:${x.k==='d'?'var(--r)':'var(--g)'}">${x.k==='d'?'+':'−'}${P(x.amt)}</b><button class="x" onclick="askTx('${id}','${x.id}')" aria-label="Delete">${I('x')}</button></div></div>`).join('')||'<div class="sub" style="padding-top:8px">No entries.</div>'}
+  <div class="acts"><button class="btn" onclick="pForm('${id}')">Edit</button><button class="btn rd" onclick="askP('${id}')">Delete</button></div>`);
+}
+function mailOne(id){call('remindOne',[id],i=>i.sent?'Reminder emailed to '+get(id).name:'Could not send the email',()=>openDetail(id))}
+function confirmAll(){
+  const owing=D.filter(p=>bal(p)>0),em=owing.filter(p=>p.email),od=em.filter(p=>st(p)==='overdue'),ne=owing.length-em.length;
+  if(!owing.length)return toast('Nobody owes you right now.',1);
+  if(!em.length)return toast('Add email addresses to your borrowers first.',1);
+  show(`<h3>Email reminders</h3><div class="mut" style="margin-top:6px">${em.length} borrower${em.length>1?'s':''} will receive an email from your Gmail.${od.length?` ${od.length} overdue will get an overdue notice.`:''}${ne?` ${ne} without an email will be skipped.`:''}</div>
+  <div class="acts"><button class="btn" onclick="closeDlg()">Cancel</button><button class="btn p" onclick="sendAll()">Send now</button></div>`);
+}
+function sendAll(){closeDlg();call('remindAll',[],i=>i.sent+' email'+(i.sent===1?'':'s')+' sent'+(i.failed?', '+i.failed+' failed':''))}
+function openSettings(){callS('getSettings',[],c=>{
+  show(`<h3>Settings</h3><div class="mut">Email and phone notification options.</div>
+  <label>Your name (shown in emails)</label><input id="c1" value="${E(c.name)}" placeholder="e.g. Maria’s Store">
+  <label>Payment details (shown in emails)</label><textarea id="c2" rows="2" placeholder="e.g. GCash 0917 000 0000 – Maria S.">${E(c.pay)}</textarea>
+  <div class="sw" onclick="tgl('c3')"><span><b>Auto-email overdue borrowers</b><br><span class="sub">Checks every morning and emails anyone past their due date.</span></span><input type="checkbox" id="c3" ${c.auto?'checked':''}><span class="tg"></span></div>
+  <div class="sw" onclick="tgl('c6')"><span><b>Thank-you emails</b><br><span class="sub">Automatically email borrowers when they make a payment or pay in full.</span></span><input type="checkbox" id="c6" ${c.thanks?'checked':''}><span class="tg"></span></div>
+  <label>Loan categories</label><div id="pl" style="margin-top:2px"></div><div style="display:flex;gap:8px"><input id="pn" placeholder="Add a category, e.g. Rice" style="flex:1"><button class="btn" onclick="addPur()">Add</button></div>
+  <label>Repeat overdue email every (days)</label><input id="c4" type="number" min="1" inputmode="numeric" value="${c.repeat}">
+  <label>Phone push topic (optional)</label><input id="c5" autocapitalize="off" value="${E(c.topic)}" placeholder="e.g. maria-debts-48213">
+  <div class="sub" style="margin-top:8px">Install the free <b>ntfy</b> app and subscribe to this topic for push alerts. You also get an email summary at ${E(c.owner)}, which the Gmail app notifies you about. Use a hard-to-guess topic.</div>
+  <button class="btn" style="width:100%;margin-top:18px" onclick="openConnect()">Connection settings</button>
+  <div class="acts"><button class="btn" onclick="saveSet(1)">Send test</button><button class="btn p" onclick="saveSet()">Save</button></div>`);TMP=[...PUR];renderPur()},'Loading settings…')}
+function saveSet(test){
+  const o={name:$('c1').value.trim(),pay:$('c2').value.trim(),auto:$('c3').checked,repeat:parseInt($('c4').value)||3,topic:$('c5').value.trim(),thanks:$('c6').checked};
+  callS('saveSettings',[o],()=>callS('savePurposes',[TMP],l=>{PUR=l;if(test){callS('testNotify',[],()=>toast('Test sent. Check your phone.'),'Sending test…')}else{toast('Settings saved');closeDlg()}}),'Saving settings…');
+}
+function tForm(id,k){
+  const b=bal(get(id)),pay=k==='p';
+  show(`<h3>${pay?'Record payment':'Add debt'}</h3><div class="mut">${E(get(id).name)} · balance ${P(Math.max(b,0))}</div>
+  <label>Amount (₱) *</label><input id="b1" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="${pay&&b>0?b:''}">
+  ${pay&&b>0?`<div style="margin-top:8px"><button class="chip" onclick="$('b1').value=${b}">Pay full balance</button></div>`:''}
+  <div class="g2"><div><label>Date</label><input id="b2" type="date" value="${today()}"></div>
+  <div><label>${pay?'Payment method':'What for?'}</label>${pay?`<select id="b3" style="width:100%" onchange="$('b4').style.display=this.value==='Other'?'block':'none'">${['Cash','GCash','Maya','Bank transfer','Check','Other'].map(o=>`<option>${o}</option>`).join('')}</select>`:`<select id="b3" style="width:100%" onchange="$('b3n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select>`}</div></div>
+  ${pay?'':'<input id="b3n" placeholder="New category name" style="display:none;margin-top:10px">'}
+  <input id="b4" placeholder="Specify (optional)" style="display:none;margin-top:10px">
+  <div class="acts"><button class="btn" onclick="openDetail('${id}')">Cancel</button><button class="btn p" onclick="tSave('${id}','${k}')">Save</button></div>`);
+}
+function tSave(id,k){
+  const a=parseFloat($('b1').value);if(!(a>0))return toast('Enter a valid amount.',1);
+  const was=bal(get(id));
+  let nt;if(k==='p')nt=$('b3').value==='Other'?($('b4').value.trim()||'Other'):$('b3').value;else{nt=purVal('b3');if(nt===null)return toast('Type the new category name.',1)}
+  call('addTx',[id,k,$('b2').value||today(),a,nt],i=>{if(k!=='p')return 'Debt added';if(!i||(!i.mail&&!i.mailErr))return 'Payment recorded';if(i.mailErr)return 'Payment saved. Thank-you email failed: '+i.mailErr;return i.mail==='paid'?'Paid in full. Thank-you email sent':'Payment recorded. Thank-you email sent'},()=>{openDetail(id);if(k==='p'&&a>=was&&was>0)burst()});
+}
+function ask(title,text,back,fn){
+  pending=fn;
+  show(`<h3>${title}</h3><div class="mut" style="margin-top:6px">${text}</div>
+  <div class="acts"><button class="btn" onclick="${back}">Cancel</button><button class="btn rd solid" onclick="pending()">Delete</button></div>`);
+}
+function askTx(id,tid){ask('Delete this entry?','This will change the balance. It cannot be undone.',`openDetail('${id}')`,()=>call('deleteTx',[tid],'Entry deleted',()=>openDetail(id)))}
+function askP(id){ask('Delete this borrower?','The record and all their transactions will be permanently removed.',`openDetail('${id}')`,()=>call('deleteBorrower',[id],'Borrower deleted',closeDlg))}
+try{D=JSON.parse(localStorage.getItem(CACHE)||'[]')}catch(e){D=[]}
+if(D.length)render(1);
+if(cfg()){load();loadPur()}else openConnect();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script></body></html>
