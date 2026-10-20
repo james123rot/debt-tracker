@@ -108,7 +108,7 @@ label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 
 .rule{border-top:3px solid #111;border-bottom:1px solid #111;height:5px;margin:12px 0 14px}
 .dt{text-align:center;font-size:19px;letter-spacing:.2em;margin:6px 0 2px;font-weight:700}.dref{text-align:center;font-size:11px;color:#555;margin-bottom:16px}
 .dc{margin-bottom:12px}.dch{font-weight:700}.dc p{margin:2px 0 0;text-align:justify}
-.dsig{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}.dsig .sl{border-top:1px solid #111;margin:6px 0 4px}.dsig span{font-size:12px;color:#555}.ds{height:56px;max-width:100%;object-fit:contain;display:block}
+.dsig{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}.dsig .sl{border-top:1px solid #111;margin:0 0 4px}.dsig span{font-size:12px;color:#555}.ds{height:56px;max-width:100%;object-fit:contain;object-position:left bottom;display:block}
 a.btn{color:var(--g)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
@@ -127,7 +127,7 @@ a.btn{color:var(--g)}
 <button class="fab" onclick="openNew()" aria-label="New borrower"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 <dialog id="dlg"></dialog><div class="toast" id="toast"></div>
 <script>
-let D=[],filt='all',pending=null,NB=null,CUR='',AGR=null,RC='',INK=false,LOGO,SET={name:'',pay:'',agreement:''};
+let D=[],filt='all',pending=null,NB=null,CUR='',AGR=null,RC='',INK=false,LOGO,LSIG,SET={name:'',pay:'',agreement:''};
 const $=id=>document.getElementById(id);
 const P=n=>'₱'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -250,7 +250,7 @@ function tgl(a,b){const c=$(a);c.checked=!c.checked;if(b)$(b).classList.toggle('
 function pForm(id){
   const p=id?get(id):(NB||{}),n=!id,on=p.rate>0;
   show(`<h3>${n?'New borrower':'Edit details'}</h3><div class="mut">${n?'Add the person and what they borrowed.':'Update this borrower’s information.'}</div>
-  <label>Full name *</label><input id="a1" value="${E(p.name)}" placeholder="e.g. Juan Dela Cruz" autocomplete="off">
+  <label>Full name (first and last) *</label><input id="a1" value="${E(p.name)}" placeholder="e.g. Juan Dela Cruz" autocomplete="off">
   <div class="g2"><div><label>Phone</label><input id="a2" value="${E(p.phone)}" inputmode="tel" placeholder="09XX XXX XXXX"></div>
   <div><label>Due date</label><input id="a4" type="date" value="${E(p.due)}"></div></div>
   <label>Email (for reminders)</label><input id="a8" type="email" inputmode="email" autocapitalize="off" value="${E(p.email)}" placeholder="name@gmail.com">
@@ -266,7 +266,7 @@ function pForm(id){
   if(matchMedia('(pointer:fine)').matches)setTimeout(()=>$('a1').focus(),60);
 }
 function pSave(id){
-  const name=$('a1').value.trim();if(!name)return toast('Please enter a name.',1);
+  const name=$('a1').value.trim().replace(/\s+/g,' ');if(name.split(' ').length<2)return toast('Please enter the full name (first and last name).',1);
   const email=$('a8').value.trim();if(email&&!/^\S+@\S+\.\S+$/.test(email))return toast('That email looks invalid.',1);
   const on=$('a9').checked,rate=parseFloat($('a10').value);if(on&&!(rate>0))return toast('Enter an interest rate.',1);
   const p={id,name,phone:$('a2').value.trim(),address:$('a3').value.trim(),due:$('a4').value,notes:$('a5').value.trim(),email,rate:on?rate:0,per:$('a11').value};
@@ -306,12 +306,14 @@ function confirmAll(){
   <div class="acts"><button class="btn" onclick="closeDlg()">Cancel</button><button class="btn p" onclick="sendAll()">Send now</button></div>`);
 }
 function sendAll(){closeDlg();call('remindAll',[],i=>i.sent+' email'+(i.sent===1?'':'s')+' sent'+(i.failed?', '+i.failed+' failed':''))}
-function openSettings(){callS('getSettings',[],c=>{LOGO=undefined;
+function openSettings(){callS('getSettings',[],c=>{LOGO=undefined;LSIG=undefined;
   show(`<h3>Settings</h3><div class="mut">Email and phone notification options.</div>
-  <label>Your name (shown in emails)</label><input id="c1" value="${E(c.name)}" placeholder="e.g. Maria’s Store">
+  <label>Your full name (printed under your signature)</label><input id="c8" value="${E(c.fullName||'')}" placeholder="e.g. Maria Santos Cruz" autocomplete="off">
+  <label>Business name (optional, shown on emails and agreements)</label><input id="c1" value="${E(c.name)}" placeholder="e.g. Maria’s Store">
   <label>Payment details (shown in emails)</label><textarea id="c2" rows="2" placeholder="e.g. GCash 0917 000 0000 – Maria S.">${E(c.pay)}</textarea>
   <div class="sw" onclick="tgl('c3')"><span><b>Auto-email overdue borrowers</b><br><span class="sub">Checks every morning and emails anyone past their due date.</span></span><input type="checkbox" id="c3" ${c.auto?'checked':''}><span class="tg"></span></div>
   <div class="sw" onclick="tgl('c6')"><span><b>Thank-you emails</b><br><span class="sub">Automatically email borrowers when they make a payment or pay in full.</span></span><input type="checkbox" id="c6" ${c.thanks?'checked':''}><span class="tg"></span></div>
+  <label>My signature (added to every agreement)</label><div id="lsw"></div>
   <label>Lender logo (shown on agreements)</label>
   <div style="display:flex;align-items:center;gap:12px"><img id="lgp" src="${c.logo||''}" style="${c.logo?'':'display:none;'}max-height:56px;max-width:140px;background:#fff;border-radius:8px;padding:4px" alt=""><input type="file" id="lgf" accept="image/*" onchange="pickLogo(this)" style="flex:1"></div>
   <button class="btn sm" style="margin-top:8px" onclick="clearLogo()">Remove logo</button>
@@ -321,9 +323,9 @@ function openSettings(){callS('getSettings',[],c=>{LOGO=undefined;
   <label>Phone push topic (optional)</label><input id="c5" autocapitalize="off" value="${E(c.topic)}" placeholder="e.g. maria-debts-48213">
   <div class="sub" style="margin-top:8px">Install the free <b>ntfy</b> app and subscribe to this topic for push alerts. You also get an email summary at ${E(c.owner)}, which the Gmail app notifies you about. Use a hard-to-guess topic.</div>
   <button class="btn" style="width:100%;margin-top:18px" onclick="openConnect()">Connection settings</button>
-  <div class="acts"><button class="btn" onclick="saveSet(1)">Send test</button><button class="btn p" onclick="saveSet()">Save</button></div>`);},'Loading settings…')}
+  <div class="acts"><button class="btn" onclick="saveSet(1)">Send test</button><button class="btn p" onclick="saveSet()">Save</button></div>`);lsRender(c.lsig);},'Loading settings…')}
 function saveSet(test){
-  const o={name:$('c1').value.trim(),pay:$('c2').value.trim(),auto:$('c3').checked,repeat:parseInt($('c4').value)||3,topic:$('c5').value.trim(),thanks:$('c6').checked,agreement:$('c7').value.trim()===DEF_AGR.trim()?'':$('c7').value.trim(),logo:LOGO};
+  const o={fullName:$('c8').value.trim().replace(/\s+/g,' '),name:$('c1').value.trim(),pay:$('c2').value.trim(),auto:$('c3').checked,repeat:parseInt($('c4').value)||3,topic:$('c5').value.trim(),thanks:$('c6').checked,agreement:$('c7').value.trim()===DEF_AGR.trim()?'':$('c7').value.trim(),logo:LOGO,lsig:LSIG};
   callS('saveSettings',[o],()=>{loadSet();if(test){callS('testNotify',[],()=>toast('Test sent. Check your phone.'),'Sending test…')}else{toast('Settings saved');closeDlg()}},'Saving settings…');
 }
 function mth(){const v=$('b3').value;$('b4').style.display=v==='Other'?'block':'none';$('rc').style.display=v==='Cash'?'none':'block';$('rcl').textContent=v==='GCash'?'GCash receipt photo (required)':'Receipt photo (optional)'}
@@ -374,7 +376,7 @@ Both sides have read this agreement, understand it, and agree to follow it.`;
 function loadSet(){api('getSettings').then(x=>{SET=x}).catch(()=>{})}
 function fillAgr(t,p){
   const ir=p.rate>0?`The Borrower will pay ${p.rate}% interest ${p.per==='once'?'one time':'every '+p.per} on the amount borrowed.`:'No interest will be charged.';
-  const m={borrower:p.name,lender:SET.name||'the Lender',amount:P(p.amt||0),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,pay:SET.pay?'Payment details: '+SET.pay:''};
+  const m={borrower:p.name,lender:SET.fullName||SET.name||'the Lender',amount:P(p.amt||0),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,pay:SET.pay?'Payment details: '+SET.pay:''};
   if(!m.pay)t=t.replace(/\{\{pay\}\}\n?/g,'');return t.replace(/\{\{(\w+)\}\}/g,(a,k)=>k in m?m[k]:a);
 }
 function sigPad(){return `<div style="position:relative"><canvas id="sg" width="600" height="220" style="width:100%;height:150px;background:#fff;border-radius:12px;touch-action:none;display:block"></canvas><div id="sgh" style="position:absolute;inset:0;display:grid;place-items:center;color:#9ca3af;pointer-events:none">Sign here with your finger</div></div><div style="margin-top:8px"><button class="btn sm" onclick="sigClear()">Clear signature</button></div>`}
@@ -430,17 +432,17 @@ function parseAgr(t){
   return{title,items:bl.map(b=>{const L=b.split('\n'),m=/^(\d+)\.\s+(.*)$/.exec(L[0]);return m?{h:m[1]+'. '+m[2],body:L.slice(1).join('\n').trim()}:{h:'',body:b}})};
 }
 function paperHTML(a,p){
-  const d=parseAgr(a.text),ln=SET.name||'';
+  const d=parseAgr(a.text),ln=SET.name||'',lnm=SET.fullName||SET.name||'Lender';
   return `<div class="doc"><div class="dh">${SET.logo?`<img src="${SET.logo}" class="dl" alt="">`:''}${ln?`<div class="dn">${E(ln)}</div>`:''}</div><div class="rule"></div>
   <div class="dt">${E(d.title)}</div><div class="dref">Ref. No. ${E(p.id.toUpperCase())}</div>
   ${d.items.map(i=>`<div class="dc">${i.h?`<div class="dch">${E(i.h)}</div>`:''}${i.body?`<p>${E(i.body).replace(/\n/g,'<br>')}</p>`:''}</div>`).join('')}
-  <div class="dsig"><div><div style="height:56px"></div><div class="sl"></div><b>${E(ln||'Lender')}</b><br><span>Lender</span></div>
+  <div class="dsig"><div>${SET.lsig?`<img src="${SET.lsig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(lnm)}</b><br><span>Lender</span></div>
   <div>${a.sig?`<img src="${a.sig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(p.name)}</b><br><span>Borrower${a.signedOn?' · Signed '+E(fmtD(a.signedOn)):''}</span></div></div></div>`;
 }
 const loadImg=u=>new Promise(r=>{if(!u)return r(null);const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=u});
 async function makePDF(a,p){
   const W=595,H=842,S=2.5,ML=58,CW=W-ML*2,TOP=54,BOT=64,LH=16.5,ref='Ref. No. '+p.id.toUpperCase();
-  const d=parseAgr(a.text),ln=SET.name||'',[logo,sig]=await Promise.all([loadImg(SET.logo),loadImg(a.sig)]);
+  const d=parseAgr(a.text),ln=SET.name||'',lnm=SET.fullName||SET.name||'Lender',[logo,sig,lsig]=await Promise.all([loadImg(SET.logo),loadImg(a.sig),loadImg(SET.lsig)]);
   const F=(z,b,i)=>`${i?'italic ':''}${b?'bold ':''}${z}px "Times New Roman",Times,Georgia,serif`;
   const pages=[];let x,y;
   const np=()=>{const c=document.createElement('canvas');c.width=W*S;c.height=H*S;x=c.getContext('2d');x.scale(S,S);x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#111';x.textAlign='left';pages.push(c);y=TOP};
@@ -456,9 +458,9 @@ async function makePDF(a,p){
   x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText(ref,W/2,y+4);x.fillStyle='#111';x.textAlign='left';y+=28;
   d.items.forEach(i=>{if(i.h){need(LH*3);x.font=F(11.5,1);x.fillText(i.h,ML,y);y+=LH}if(i.body)para(i.body);y+=8});
   need(150);y+=22;const cw=(CW-40)/2,x2=ML+cw+40;
-  if(sig){const k=Math.min(cw/sig.width,54/sig.height);x.drawImage(sig,x2,y+54-sig.height*k,sig.width*k,sig.height*k)}
+  const ds=(im,xx)=>{if(im){const k=Math.min(cw/im.width,54/im.height),h=im.height*k;x.drawImage(im,xx,y+61-h,im.width*k,h)}};ds(lsig,ML);ds(sig,x2);
   x.fillRect(ML,y+58,cw,.8);x.fillRect(x2,y+58,cw,.8);
-  x.font=F(11,1);x.fillText(ln||'Lender',ML,y+73);x.fillText(p.name,x2,y+73);
+  x.font=F(11,1);x.fillText(lnm,ML,y+73);x.fillText(p.name,x2,y+73);
   x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText('Lender',ML,y+86);x.fillText('Borrower'+(a.signedOn?' · Signed '+fmtD(a.signedOn):''),x2,y+86);
   pages.forEach((c,i)=>{const g=c.getContext('2d');g.fillStyle='#777';g.fillRect(ML,H-48,CW,.5);g.font=F(9);g.textAlign='center';g.fillText('Page '+(i+1)+' of '+pages.length+'   ·   '+ref,W/2,H-34)});
   const jp=pages.map(c=>{const b=atob(c.toDataURL('image/jpeg',.92).split(',')[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return{bytes:u,w:c.width,h:c.height}});
@@ -491,6 +493,10 @@ function readLogo(file){return new Promise((res,rej)=>{const fr=new FileReader()
   rej(new Error('That logo is too detailed. Try a simpler image.'))};im.onerror=()=>rej(new Error('Could not read that image.'));im.src=fr.result};fr.onerror=()=>rej(new Error('Could not read that file.'));fr.readAsDataURL(file)})}
 function pickLogo(inp){const f=inp.files[0];if(f)readLogo(f).then(u=>{LOGO=u;$('lgp').src=u;$('lgp').style.display='block'}).catch(e=>toast(e.message,1))}
 function clearLogo(){LOGO='';$('lgp').style.display='none';$('lgf').value=''}
+function lsRender(v){$('lsw').innerHTML=(v?`<img src="${v}" style="background:#fff;border-radius:10px;height:70px;max-width:100%;display:block" alt="Signature">`:'<div class="sub">No signature saved yet.</div>')+`<div style="margin-top:8px;display:flex;gap:8px"><button class="btn sm" onclick="lsEdit()">${v?'Change signature':'Draw signature'}</button>${v?'<button class="btn sm rd" onclick="lsClear()">Remove</button>':''}</div>${LSIG!==undefined?'<div class="sub" style="margin-top:6px">Press Save to apply it to all agreements.</div>':''}`}
+function lsEdit(){$('lsw').innerHTML=sigPad()+'<div class="acts" style="margin-top:8px"><button class="btn" onclick="lsRender(LSIG!==undefined?LSIG:SET.lsig)">Cancel</button><button class="btn p" onclick="lsUse()">Use signature</button></div>';sigInit()}
+function lsUse(){const d=sigData();if(!d)return toast('Please draw your signature first.',1);LSIG=d;lsRender(d)}
+function lsClear(){LSIG='';lsRender('')}
 function ask(title,text,back,fn){
   pending=fn;
   show(`<h3>${title}</h3><div class="mut" style="margin-top:6px">${text}</div>
