@@ -13,30 +13,33 @@
 <style>
 :root{--bg:#050505;--c1:#0f0f10;--c2:#161617;--bd:#242427;--tx:#f4f4f5;--mut:#8b8b92;--g:#22c55e;--gd:#16a34a;--gs:rgba(34,197,94,.13);--r:#ef4444;--rs:rgba(239,68,68,.13);color-scheme:dark}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0}
-body{background:var(--bg);color:var(--tx);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;min-height:100vh}
+body{background:var(--bg);color:var(--tx);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,sans-serif;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 svg{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
 .w{max-width:760px;margin:0 auto;padding:0 16px}
 .top{position:sticky;top:0;z-index:5;background:rgba(5,5,5,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
 .top .w{display:flex;align-items:center;justify-content:space-between;height:60px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em}
 .logo i{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--g),var(--gd));display:grid;place-items:center;color:#021b0b;font-style:normal;font-weight:800;box-shadow:0 0 18px rgba(34,197,94,.45)}
-main{padding:18px 16px 110px}
-.hero{position:relative;overflow:hidden;border:1px solid var(--bd);border-radius:20px;padding:20px;background:radial-gradient(120% 140% at 0% 0%,rgba(34,197,94,.18),transparent 55%),var(--c1);animation:up .6s both}
+main{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;max-width:760px;margin:0 auto;padding:12px 16px 0}
+.top{flex:none}.hero,.tools,.chips{flex:none}
+#list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:110px}
+#vr{overflow-y:auto;overscroll-behavior:contain;padding-bottom:60px}#vr>*{flex:none}
+.hero{position:relative;overflow:hidden;border:1px solid var(--bd);border-radius:20px;padding:14px 16px;background:radial-gradient(120% 140% at 0% 0%,rgba(34,197,94,.18),transparent 55%),var(--c1);animation:up .6s both}
 .hero .row1{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .lbl{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-.amt{font-size:clamp(30px,8vw,40px);font-weight:800;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
-.ring{position:relative;width:72px;height:72px;flex:none}.ring svg{width:72px;height:72px;transform:rotate(-90deg);stroke-width:7}
+.amt{font-size:clamp(26px,7vw,34px);font-weight:800;letter-spacing:-.02em;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.ring{position:relative;width:60px;height:60px;flex:none}.ring svg{width:60px;height:60px;transform:rotate(-90deg);stroke-width:7}
 .ring circle{fill:none}.ring .bg{stroke:var(--bd)}.ring .fg{stroke:var(--g);stroke-dasharray:163.4;stroke-dashoffset:163.4;transition:stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 5px rgba(34,197,94,.6))}
 .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:15px}
-.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-.mini div{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.mini div{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:8px 12px}
 .mini b{display:block;font-size:16px;margin-top:2px;font-variant-numeric:tabular-nums}
-.tools{display:flex;gap:8px;margin:18px 0 12px}
+.tools{display:flex;gap:8px;margin:12px 0 10px}
 .search{flex:1;position:relative}.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:17px}
 input,select,textarea{font:inherit;font-size:16px;color:var(--tx);width:100%;background:var(--c1);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;outline:none;transition:.2s}
 .search input{padding-left:40px}select{width:auto;padding-right:10px}
 input:focus,select:focus,textarea:focus{border-color:var(--g);box-shadow:0 0 0 3px var(--gs)}
-.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px}.chips::-webkit-scrollbar{display:none}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}.chips::-webkit-scrollbar{display:none}
 .chip,.btn,.fab{position:relative;overflow:hidden;font:inherit;cursor:pointer;transition:transform .15s,background .2s,border-color .2s,box-shadow .2s}
 .chip{background:var(--c1);color:var(--mut);border:1px solid var(--bd);border-radius:99px;padding:7px 14px;white-space:nowrap;font-size:14px}
 .chip span{opacity:.6;margin-left:4px}.chip.on{background:var(--g);border-color:var(--g);color:#04210d;font-weight:600;box-shadow:0 0 16px rgba(34,197,94,.35)}
@@ -72,7 +75,7 @@ dialog{position:fixed;left:0;right:0;top:8vh;bottom:auto;margin:0 auto;border:1p
 dialog[open]{animation:pop .32s cubic-bezier(.2,.9,.3,1.15)}dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px);animation:fd .25s}
 @keyframes pop{from{opacity:0;transform:translateY(24px) scale(.95)}}@keyframes fd{from{opacity:0}}
 .sheet{padding:20px;position:relative}.sheet h3{margin:0 0 3px;font-size:20px;letter-spacing:-.01em}
-.xb{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:var(--c2);color:var(--mut);cursor:pointer;display:grid;place-items:center;font-size:16px}
+.xb{position:absolute;right:14px;top:14px;width:38px;height:38px;border-radius:50%;border:1px solid var(--r);background:var(--r);color:#fff;z-index:2;cursor:pointer;display:grid;place-items:center;font-size:16px}
 label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 0 6px;text-transform:uppercase;letter-spacing:.07em}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.acts{display:flex;gap:8px;margin-top:20px}.acts .btn{flex:1}
 .hd{display:flex;gap:13px;align-items:center;margin:0 36px 12px 0}.hd .av{width:52px;height:52px;font-size:18px}
@@ -91,7 +94,7 @@ label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 
 .sw .tg:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.25s}
 .sw input:checked+.tg{background:var(--g);box-shadow:0 0 12px rgba(34,197,94,.5)}.sw input:checked+.tg:after{transform:translateX(18px)}
 .ib{overflow:hidden;max-height:0;opacity:0;transition:max-height .4s,opacity .3s}.ib.on{max-height:240px;opacity:1}
-.hbtn{width:38px;height:38px;border-radius:50%;padding:0;font-size:18px}.mailall{width:100%;margin-top:12px}
+.hbtn{width:38px;height:38px;border-radius:50%;padding:0;font-size:18px}.mailall{width:100%;margin-top:10px;padding:9px 16px}
 .ov{position:absolute;inset:0;z-index:90;background:rgba(10,10,11,.86);backdrop-filter:blur(3px);animation:fd .2s;border-radius:inherit}
 .ov.g{position:fixed;background:rgba(0,0,0,.78)}
 .ovi{position:sticky;top:0;height:min(100%,70vh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px}
@@ -110,26 +113,47 @@ label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 
 .dc{margin-bottom:12px}.dch{font-weight:700}.dc p{margin:2px 0 0;text-align:justify}
 .dsl{display:flex;align-items:flex-end;gap:10px;margin:6px 0 14px}.dsl span{white-space:nowrap}.dsb{flex:1;max-width:260px;border-bottom:1px solid #111;height:52px;display:flex;align-items:flex-end}.dsb img{max-height:50px;max-width:100%;object-fit:contain;object-position:left bottom}
 .pgb{border-top:2px dashed #bbb;margin:30px 0 22px}.dc.hd{margin-bottom:2px;margin-top:8px}
+.btn.cx{background:var(--rs);border-color:rgba(239,68,68,.55);color:var(--r)}
+.hc{display:block;margin:6px auto 0;background:none;border:0;color:var(--mut);font:inherit;font-size:12px;cursor:pointer}.hero.min .mini{display:none}
+.hist{max-height:34vh;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--bd);border-radius:12px;padding:0 12px 6px;margin-top:10px;-webkit-overflow-scrolling:touch}
+.hist::-webkit-scrollbar{width:6px}.hist::-webkit-scrollbar-thumb{background:#3a3a3f;border-radius:9px}.hist .sec:first-child{margin-top:10px}
+.tabs{flex:none;display:flex;gap:8px;max-width:760px;margin:0 auto;padding:10px 16px 0;width:100%}
+.tab{flex:1;padding:10px;border-radius:12px;border:1px solid var(--bd);background:var(--c1);color:var(--mut);font:inherit;font-weight:600;cursor:pointer;transition:.2s}.tab.on{background:var(--gs);border-color:rgba(34,197,94,.5);color:var(--g)}
+body[data-v=r] .fab{display:none!important}
+.rk{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.rcd{background:var(--c1);border:1px solid var(--bd);border-radius:16px;padding:14px 16px;animation:up .5s both}
+.rk small{color:var(--mut);font-size:12px;display:block}.rk b{font-size:20px;display:block;margin-top:2px;font-variant-numeric:tabular-nums}.rk i{font-style:normal;color:var(--mut);font-size:12px;display:block;margin-top:3px}
+.rc{margin-bottom:12px}.rh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}.lg{font-size:12px;color:var(--mut)}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 4px 0 8px;vertical-align:-1px}
+.bar2{transform-box:fill-box;transform-origin:bottom;animation:gr2 .8s cubic-bezier(.2,.8,.2,1) both}@keyframes gr2{from{transform:scaleY(0)}}
+.rt{width:100%;border-collapse:collapse;margin-top:8px}.rt th{font-size:11px;color:var(--mut);text-transform:uppercase;text-align:right;padding:6px 0}.rt th:first-child,.rt td:first-child{text-align:left}
+.rt td{padding:9px 0;border-top:1px solid var(--bd);text-align:right;font-variant-numeric:tabular-nums;font-size:14px}.rt .tt td{font-weight:800}
+.rn{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.rn div{background:var(--c2);border-radius:12px;padding:10px 6px;text-align:center}.rn b{display:block;font-size:18px}.rn span{font-size:11px;color:var(--mut)}
+.tb{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:14px}.tb span:first-child{flex:0 0 38%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tb div{flex:1;height:8px;background:var(--bd);border-radius:9px;overflow:hidden}.tb div div{height:100%;background:var(--g);border-radius:9px}.tb b{font-variant-numeric:tabular-nums}
+.pgb{border-top:2px dashed #bbb;margin:30px 0 22px}
+.sgb{display:grid;grid-template-columns:1fr 1fr;gap:22px 28px;margin:16px 0 8px}.sgc{display:flex;flex-direction:column}.sgi{height:60px;display:flex;align-items:flex-end}.sgi img{max-height:58px;max-width:100%;object-fit:contain;object-position:left bottom}
+.sgc .sl{border-top:1px solid #111;margin:0 0 4px}.sgc span{font-size:12px;color:#555}
 .dsig{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}.dsig .sl{border-top:1px solid #111;margin:0 0 4px}.dsig span{font-size:12px;color:#555}.ds{height:56px;max-width:100%;object-fit:contain;object-position:left bottom;display:block}
 a.btn{color:var(--g)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="ld" id="ld"></div>
 <div class="top"><div class="w"><div class="logo"><i>₱</i>Debt Tracker</div><div style="display:flex;gap:8px;align-items:center"><button class="btn sm" id="inst" style="display:none" onclick="doInstall()">Install app</button><button class="btn hbtn" onclick="openSettings()" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="btn p sm nw" onclick="openNew()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New borrower</button></div></div></div>
-<main class="w">
-<div class="hero"><div class="row1"><div><div class="lbl">Outstanding balance</div><div class="amt" id="s3">₱0.00</div><div class="sub" id="s4">&nbsp;</div></div>
+<div class="tabs"><button class="tab on" id="t1" onclick="setView('b')">Borrowers</button><button class="tab" id="t2" onclick="setView('r')">Reports</button></div>
+<main id="vb">
+<div class="hero" id="hero"><div class="row1"><div><div class="lbl">Outstanding balance</div><div class="amt" id="s3">₱0.00</div><div class="sub" id="s4">&nbsp;</div></div>
 <div class="ring"><svg viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" id="rg" cx="32" cy="32" r="26"/></svg><b id="rt">0%</b></div></div>
 <div class="mini"><div><span class="lbl">Total lent</span><b id="s1">₱0.00</b></div><div><span class="lbl">Collected</span><b id="s2" style="color:var(--g)">₱0.00</b></div></div>
-<button class="btn p mailall" onclick="confirmAll()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span id="mc">Email reminders</span></button></div>
+<button class="btn p mailall" onclick="confirmAll()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span id="mc">Email reminders</span></button><button class="hc" id="hc" onclick="toggleHero()">Hide details</button></div>
 <div class="tools"><div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="Search borrowers" oninput="render()"></div>
 <select id="so" onchange="render(1)"><option value="bal">Highest balance</option><option value="name">Name A–Z</option><option value="due">Due soonest</option></select></div>
 <div class="chips" id="chips"></div>
 <div id="list"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>
 </main>
+<main id="vr" style="display:none"><div id="rp"></div></main>
 <button class="fab" onclick="openNew()" aria-label="New borrower"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 <dialog id="dlg"></dialog><div class="toast" id="toast"></div>
 <script>
 let D=[],filt='all',pending=null,NB=null,CUR='',AGR=null,RC='',INK=false,LOGO,LSIG,SET={name:'',pay:'',agreement:''};
+let VIEW='b',RP=localStorage.getItem('dt_rp')||'monthly';
 const $=id=>document.getElementById(id);
 const P=n=>'₱'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -154,7 +178,7 @@ const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 function toast(m,er){const t=$('toast');t.textContent=m;t.className='toast on'+(er?' er':'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2600)}
 function fit(){const v=window.visualViewport,d=$('dlg');if(!v)return;const top=v.height<520?8:Math.min(56,v.height*.07);d.style.top=(v.offsetTop+top)+'px';d.style.maxHeight=(v.height-top-12)+'px'}
 if(window.visualViewport){visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}
-function show(h){$('dlg').innerHTML='<div class="sheet"><button class="xb" onclick="closeDlg()" aria-label="Close">'+I('x')+'</button>'+h+'</div>';if(!$('dlg').open)$('dlg').showModal();fit();$('dlg').scrollTop=0}
+function show(h){$('dlg').innerHTML='<div class="sheet"><button class="xb" onclick="closeDlg()" aria-label="Close">'+I('x')+'</button>'+h+'</div>';if(!$('dlg').open)$('dlg').showModal();$('dlg').querySelectorAll('.btn').forEach(b=>{if(/^(Cancel|Close|Back)$/.test(b.textContent.trim()))b.classList.add('cx')});fit();$('dlg').scrollTop=0}
 const closeDlg=()=>$('dlg').close();
 $('dlg').addEventListener('cancel',e=>e.preventDefault());
 document.addEventListener('focusin',e=>{if(e.target.closest&&e.target.closest('dialog'))setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:'smooth'}),350)});
@@ -229,7 +253,7 @@ function doInstall(){if(!dip)return;dip.prompt();dip.userChoice.finally(()=>{dip
 function load(){call('getData',[])}
 function setFilter(f){filt=f;render(1)}
 
-function render(anim){
+function render(anim){if(VIEW==='r')renderReports();
   const q=$('q').value.toLowerCase(),so=$('so').value;
   const owing=D.filter(p=>bal(p)>0.005),lent=D.reduce((s,p)=>s+sum(p.debts),0),col=D.reduce((s,p)=>s+sum(p.payments),0),ti=D.reduce((s,p)=>s+(p.interest||0)+sum(p.interestLog||[]),0);
   cnt('s3',owing.reduce((s,p)=>s+bal(p),0));cnt('s1',lent);cnt('s2',col);
@@ -294,9 +318,9 @@ function openDetail(id){
   <div class="acts"><button class="btn p" onclick="tForm('${id}','p')"${paid?' disabled style="opacity:.4"':''}>Record payment</button><button class="btn" onclick="tForm('${id}','d')">${paid?'Borrow again':'Add debt'}</button></div>
   <div class="sec">Agreement</div>
   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px"><span class="pill ${ag&&ag.signed?'paid':'overdue'}">${ag?(ag.signed?'Signed '+E(fmtD(ag.signedOn)):'Not signed'):'No agreement'}</span><button class="btn sm" onclick="viewAgr('${id}')">${ag?'View / Edit':'Create'}</button></div>
-  ${cur.length?`<div class="sec">History</div>${cur.map((x,i)=>hrow(x,i,id)).join('')}`:''}
+  <div class="hist">  ${cur.length?`<div class="sec">History</div>${cur.map((x,i)=>hrow(x,i,id)).join('')}`:''}
   ${old.length?`<div class="sec">Paid history</div><div style="opacity:.7">${old.map((x,i)=>hrow(x,i,id)).join('')}</div>`:''}
-  ${all.length?'':'<div class="sub" style="padding-top:8px">No entries.</div>'}
+  ${all.length?'':'<div class="sub" style="padding-top:8px">No entries.</div>'}</div>
   <div class="acts"><button class="btn" onclick="pForm('${id}')">Edit</button><button class="btn rd" onclick="askP('${id}')">Delete</button></div>`);
 }
 function mailOne(id){call('remindOne',[id],i=>i.sent?'Reminder emailed to '+get(id).name:'Could not send the email',()=>openDetail(id))}
@@ -511,7 +535,7 @@ function fillAgr(t,p){
   const known=p.rate>0&&(p.per==='once'||p.due);
   if(p.rate>0){if(p.per==='once')ia=base*p.rate/100;else if(p.due){const dd=Math.round((new Date(p.due+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5),n=Math.floor(dd/dv);ia=n>0?base*p.rate/100*n:0}}
   const ir=p.rate>0?`The Borrower will pay ${p.rate}% interest ${p.per==='once'?'one time':'every '+p.per} on the amount borrowed.`:'No interest will be charged.';
-  const m={borrower:p.name,lender:SET.fullName||SET.name||'the Lender',amount:P(base),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,
+  const m={borrower:p.name,amount:P(base),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,
     interest_amount:p.rate>0&&!known?'Depends on how long the loan stays unpaid':P(ia),total_amount:p.rate>0&&!known?'Principal plus interest as it grows':P(base+ia),
     payment_schedule:p.due?'One full payment on or before '+fmtD(p.due):'To be agreed by both parties',pay:SET.pay?'Payment details: '+SET.pay:''};
   if(!m.pay)t=t.replace(/\{\{pay\}\}\n?/g,'');
@@ -526,10 +550,17 @@ function sigInit(){
   c.onpointermove=e=>{if(!dr)return;const[a,b]=pt(e);x.lineTo(a,b);x.stroke()};
   c.onpointerup=c.onpointercancel=()=>{dr=false};
 }
-function sigData(){if(!INK)return'';const c=$('sg');let u=c.toDataURL('image/png');if(u.length>45000)u=c.toDataURL('image/jpeg',.6);return u}
+function sigData(){
+  if(!INK)return'';const c=$('sg'),g=c.getContext('2d'),w=c.width,h=c.height,d=g.getImageData(0,0,w,h).data;let x0=w,y0=h,x1=0,y1=0;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){if(d[(y*w+x)*4]<200){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}
+  if(x1<x0)return'';const pd=8;x0=Math.max(0,x0-pd);y0=Math.max(0,y0-pd);x1=Math.min(w-1,x1+pd);y1=Math.min(h-1,y1+pd);
+  const o=document.createElement('canvas');o.width=x1-x0+1;o.height=y1-y0+1;const og=o.getContext('2d');og.fillStyle='#fff';og.fillRect(0,0,o.width,o.height);og.drawImage(c,x0,y0,o.width,o.height,0,0,o.width,o.height);
+  let u=o.toDataURL('image/png');if(u.length>45000)u=o.toDataURL('image/jpeg',.6);return u;
+}
 const AGTA='style="font-family:Georgia,serif;font-size:15px;line-height:1.5"';
 function agreeStep(p){
   show(`<h3>Agreement</h3><div class="mut">Read it, edit the terms if you need to, then ${E(p.name)} signs. This is required before saving.</div>
+  ${SET.owner&&(!(SET.fullName||SET.name)||!SET.lsig)?'<div class="sub" style="margin-top:10px;color:var(--r)">Tip: add your full name and signature in Settings so they appear on the agreement.</div>':''}
   <label>Agreement terms (editable)</label><textarea id="ag" rows="16" ${AGTA}>${E(fillAgr(SET.agreement||DEF_AGR,p))}</textarea>
   <label>Borrower’s signature *</label>${sigPad()}
   <div class="sw" onclick="tgl('agc')"><span><b>${E(p.name)} has read and agrees</b></span><input type="checkbox" id="agc"><span class="tg"></span></div>
@@ -543,14 +574,15 @@ function agreeSave(){
   call('saveBorrower',[{...NB,agreement:{text:t,sig}}],'Borrower and agreement saved',()=>{NB=null;closeDlg()});
 }
 function viewAgr(id){
-  callS('getAgreement',[id],a=>{
-    AGR=a?{...a,id}:null;
+  $('ld').className='ld on';busy(1,'Loading agreement…');
+  Promise.all([api('getAgreement',[id]),api('getSettings')]).then(([a,st])=>{
+    $('ld').className='ld';busy(0);SET=st;AGR=a?{...a,id}:null;
     if(!a)return editAgr(id);
     show(`<h3>Agreement</h3><div class="mut">${E(get(id).name)} · ${a.signedOn?'Signed on '+E(fmtD(a.signedOn)):'Not signed'}</div>
     ${paperHTML(a,get(id))}
     <div class="acts"><button class="btn p" style="flex-basis:100%" onclick="dlAgr()">Download PDF</button></div>
     <div class="acts" style="margin-top:8px"><button class="btn" onclick="openDetail('${id}')">Back</button><button class="btn" onclick="editAgr('${id}')">Edit & sign</button></div>`);
-  },'Loading agreement…');
+  }).catch(e=>{$('ld').className='ld';busy(0);fail(e)});
 }
 function editAgr(id){
   const p=get(id),has=AGR&&AGR.id===id,last=p.debts[p.debts.length-1]||{};
@@ -570,12 +602,35 @@ const agrNo=p=>'DA-'+p.id.replace(/^b/,'').toUpperCase();
 function parseAgr(t){
   const bl=t.replace(/\r/g,'').split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);let title='AGREEMENT';
   if(bl.length&&bl[0].length<60&&!bl[0].includes('\n')&&bl[0]===bl[0].toUpperCase())title=bl.shift();
-  return{title,items:bl.map(b=>{const sg=/^(.*?)\s*\{\{(lender|borrower|witness)_signature\}\}\s*$/.exec(b);if(sg&&!b.includes('\n'))return{sig:sg[2],label:sg[1]};const L=b.split('\n'),m=/^(\d+)\.\s+(.*)$/.exec(L[0]);return m?{h:m[1]+'. '+m[2],body:L.slice(1).join('\n').trim()}:{h:'',body:b}})};
+  const raw=bl.map(b=>{const sg=/^(.*?)\s*\{\{(lender|borrower|witness)_signature\}\}\s*$/.exec(b);if(sg&&!b.includes('\n'))return{sig:sg[2],label:sg[1]};const L=b.split('\n'),m=/^(\d+)\.\s+(.*)$/.exec(L[0]);return m?{h:m[1]+'. '+m[2],body:L.slice(1).join('\n').trim()}:{h:'',body:b}});
+  const any=raw.some(i=>i.sig),out=[],pend={};let g=null,lp=null;
+  const close=()=>{if(g&&g.parties.length)out.push(g);g=null;lp=null};
+  raw.forEach(i=>{
+    if(i.sig){if(!g)g={block:1,parties:[]};lp={who:i.sig,label:i.label,name:pend[i.sig]||'',date:''};g.parties.push(lp);return}
+    if(any&&!i.h&&!i.body.includes('\n')){
+      const nm=/^(Lender|Borrower)(?:'s Name)?:\s*(.*)$/.exec(i.body),wn=/^Witness \(Optional\):\s*(.*)$/.exec(i.body),dt=/^Date(?: Signed)?:\s*(.*)$/.exec(i.body);
+      if(nm){if(!g)g={block:1,parties:[]};pend[nm[1].toLowerCase()]=nm[2];return}
+      if(wn){if(!g)g={block:1,parties:[]};pend.witness=wn[1];return}
+      if(dt&&g&&lp){lp.date=dt[1];return}
+    }
+    close();out.push(i);
+  });
+  close();return{title,items:out};
 }
-function rtFill(t,a,p){const sd=a.signedOn?fmtD(a.signedOn):'____________',m={lender:SET.fullName||SET.name||'the Lender',borrower:p.name,lender_signed_date:sd,borrower_signed_date:sd,witness:'____________________',agreement_number:agrNo(p)};return t.replace(/\{\{(\w+)\}\}/g,(x,k)=>k in m?m[k]:x)}
+function rtFill(t,a,p){
+  const ln=SET.fullName||SET.name||'',sd=a.signedOn?fmtD(a.signedOn):'____________',m={lender:ln||'the Lender',borrower:p.name,lender_signed_date:sd,borrower_signed_date:sd,witness:'____________________',agreement_number:agrNo(p)};
+  if(ln)t=t.replace(/^(Lender(?:'s Name)?:[ \t]*)the Lender[ \t]*$/gm,(x,g)=>g+ln).replace(/between the Lender \(the "Lender"\)/,()=>'between '+ln+' (the "Lender")');
+  return t.replace(/\{\{(\w+)\}\}/g,(x,k)=>k in m?m[k]:x);
+}
 const parseDoc=(t,a,p)=>rtFill(t,a,p).replace(/\r/g,'').split(/\n\s*-{3,}\s*\n/).map(parseAgr);
 const hasSig=t=>/\{\{(lender|borrower)_signature\}\}/.test(t);
-function itemHTML(i,a){
+function signHTML(g,a,p){
+  const cell=w=>{const im=w.who==='lender'?SET.lsig:w.who==='borrower'?a.sig:'',nm=w.who==='lender'?(SET.fullName||SET.name||w.name):w.who==='borrower'?p.name:w.name.replace(/_+/g,'').trim(),role=w.who==='lender'?'Lender':w.who==='borrower'?'Borrower':'Witness (optional)',dt=/_+/.test(w.date)?'':w.date;
+    return `<div class="sgc"><div class="sgi">${im?`<img src="${im}" alt="">`:''}</div><div class="sl"></div><b>${E(nm)||'&nbsp;'}</b><span>${role}</span><span>Date signed: ${E(dt)||'____________'}</span></div>`};
+  return `<div class="sgb">${g.parties.map(cell).join('')}</div>`;
+}
+function itemHTML(i,a,p){
+  if(i.block)return signHTML(i,a,p);
   if(i.sig){const im=i.sig==='lender'?SET.lsig:i.sig==='borrower'?a.sig:'';return `<div class="dsl"><span>${E(i.label)}</span><div class="dsb">${im?`<img src="${im}" alt="">`:''}</div></div>`}
   return `<div class="dc${i.body?'':' hd'}">${i.h?`<div class="dch">${E(i.h)}</div>`:''}${i.body?`<p>${E(i.body).replace(/\n/g,'<br>')}</p>`:''}</div>`;
 }
@@ -584,18 +639,18 @@ function paperHTML(a,p){
   const head=`<div class="dh">${SET.logo?`<img src="${SET.logo}" class="dl" alt="">`:''}${ln?`<div class="dn">${E(ln)}</div>`:''}</div><div class="rule"></div>`;
   const old=`<div class="dsig"><div>${SET.lsig?`<img src="${SET.lsig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(lnm)}</b><br><span>Lender</span></div>
   <div>${a.sig?`<img src="${a.sig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(p.name)}</b><br><span>Borrower${a.signedOn?' · Signed '+E(fmtD(a.signedOn)):''}</span></div></div>`;
-  return `<div class="doc">${parts.map((d,k)=>`${k?'<div class="pgb"></div>':''}${head}<div class="dt">${E(d.title)}</div><div class="dref">Agreement No. ${E(agrNo(p))}</div>${d.items.map(i=>itemHTML(i,a)).join('')}`).join('')}${hasSig(a.text)?'':old}</div>`;
+  return `<div class="doc">${parts.map((d,k)=>`${k?'<div class="pgb"></div>':''}${head}<div class="dt">${E(d.title)}</div><div class="dref">Agreement No. ${E(agrNo(p))}</div>${d.items.map(i=>itemHTML(i,a,p)).join('')}`).join('')}${hasSig(a.text)?'':old}</div>`;
 }
 const loadImg=u=>new Promise(r=>{if(!u)return r(null);const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=u});
 async function makePDF(a,p){
-  const W=595,H=842,S=2.5,ML=58,CW=W-ML*2,TOP=54,BOT=64,LH=16.5,ref='Agreement No. '+agrNo(p);
+  const W=595,H=842,S=2.5,ML=58,CW=W-ML*2,TOP=54,BOT=64,LH=15,ref='Agreement No. '+agrNo(p);
   const ln=SET.name||'',lnm=SET.fullName||SET.name||'Lender',parts=parseDoc(a.text,a,p),[logo,sig,lsig]=await Promise.all([loadImg(SET.logo),loadImg(a.sig),loadImg(SET.lsig)]);
   const F=(z,b,i)=>`${i?'italic ':''}${b?'bold ':''}${z}px "Times New Roman",Times,Georgia,serif`;
   const pages=[];let x,y;
   const np=()=>{const c=document.createElement('canvas');c.width=W*S;c.height=H*S;x=c.getContext('2d');x.scale(S,S);x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#111';x.textAlign='left';pages.push(c);y=TOP};
   const need=h=>{if(y+h>H-BOT)np()};
   const wrap=(t,f)=>{x.font=f;const o=[];t.split('\n').forEach(par=>{const w=par.split(/\s+/).filter(Boolean);let l='';if(!w.length){o.push({t:'',last:1});return}w.forEach(wd=>{const tt=l?l+' '+wd:wd;if(x.measureText(tt).width>CW&&l){o.push({t:l,last:0});l=wd}else l=tt});o.push({t:l,last:1})});return o};
-  const para=t=>{const f=F(11),ls=wrap(t,f);ls.forEach(l=>{need(LH);x.font=f;const w=l.t.split(' ');if(!l.last&&w.length>1){const sp=(CW-x.measureText(w.join('')).width)/(w.length-1);let cx=ML;w.forEach(wd=>{x.fillText(wd,cx,y);cx+=x.measureText(wd).width+sp})}else x.fillText(l.t,ML,y);y+=LH})};
+  const para=t=>{const f=F(10.5),ls=wrap(t,f);ls.forEach(l=>{need(LH);x.font=f;const w=l.t.split(' ');if(!l.last&&w.length>1){const sp=(CW-x.measureText(w.join('')).width)/(w.length-1);let cx=ML;w.forEach(wd=>{x.fillText(wd,cx,y);cx+=x.measureText(wd).width+sp})}else x.fillText(l.t,ML,y);y+=LH})};
   const head=d=>{
     np();
     if(logo){const k=Math.min(180/logo.width,56/logo.height),w=logo.width*k,h=logo.height*k;x.drawImage(logo,(W-w)/2,y,w,h);y+=h+12}
@@ -607,12 +662,19 @@ async function makePDF(a,p){
   };
   parts.forEach(d=>{
     head(d);
-    d.items.forEach(i=>{
-      if(i.sig){need(60);const im=i.sig==='lender'?lsig:i.sig==='borrower'?sig:null;x.font=F(11);x.fillStyle='#111';const lw=x.measureText(i.label).width,lx=ML+lw+10,ww=Math.min(260,CW-lw-12);
-        if(im){const k=Math.min(ww/im.width,42/im.height),h=im.height*k;x.drawImage(im,lx,y+44-h,im.width*k,h)}
-        x.fillText(i.label,ML,y+43);x.fillRect(lx,y+44,ww,.8);y+=60;return}
-      if(i.h){need(LH*3);x.font=F(11.5,1);x.fillText(i.h,ML,y);y+=LH}
-      if(i.body)para(i.body);y+=i.body?8:2;
+    const BH=g=>Math.ceil(g.parties.length/2)*108+10;
+    d.items.forEach((i,ix)=>{
+      if(i.block){
+        need(BH(i));const cw=(CW-40)/2;
+        i.parties.forEach((w,k)=>{const cx=ML+(k%2)*(cw+40),ry=y+Math.floor(k/2)*108,im=w.who==='lender'?lsig:w.who==='borrower'?sig:null;
+          if(im){const sc=Math.min(cw/im.width,52/im.height),h=im.height*sc;x.drawImage(im,cx,ry+54-h,im.width*sc,h)}
+          x.fillStyle='#111';x.fillRect(cx,ry+56,cw,.8);
+          const nm=w.who==='lender'?(SET.fullName||SET.name||w.name):w.who==='borrower'?p.name:w.name.replace(/_+/g,'').trim();
+          x.font=F(11,1);x.fillText(nm,cx,ry+70);x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText(w.who==='witness'?'Witness (optional)':w.who==='lender'?'Lender':'Borrower',cx,ry+82);
+          x.font=F(10);x.fillText('Date signed: '+(/_+/.test(w.date)?'____________':w.date),cx,ry+95);x.fillStyle='#111'});
+        y+=BH(i);return}
+      if(i.h){const nx=d.items[ix+1];need(nx&&nx.block?LH+BH(nx)+6:LH*3);x.font=F(11,1);x.fillText(i.h,ML,y);y+=LH}
+      if(i.body)para(i.body);y+=i.body?6:2;
     });
   });
   if(!hasSig(a.text)){
@@ -657,6 +719,49 @@ function lsRender(v){$('lsw').innerHTML=(v?`<img src="${v}" style="background:#f
 function lsEdit(){$('lsw').innerHTML=sigPad()+'<div class="acts" style="margin-top:8px"><button class="btn" onclick="lsRender(LSIG!==undefined?LSIG:SET.lsig)">Cancel</button><button class="btn p" onclick="lsUse()">Use signature</button></div>';sigInit()}
 function lsUse(){const d=sigData();if(!d)return toast('Please draw your signature first.',1);LSIG=d;lsRender(d)}
 function lsClear(){LSIG='';lsRender('')}
+const RM={daily:{n:14,u:'days',t:'Today',p:'yesterday'},weekly:{n:12,u:'weeks',t:'This week',p:'last week'},monthly:{n:12,u:'months',t:'This month',p:'last month'},quarterly:{n:8,u:'quarters',t:'This quarter',p:'last quarter'},annually:{n:5,u:'years',t:'This year',p:'last year'}};
+const MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const iso=d=>d.toISOString().slice(0,10),ud=t=>{const a=t.split('-').map(Number);return new Date(Date.UTC(a[0],a[1]-1,a[2]))};
+function bStart(t,m){const d=ud(t),y=d.getUTCFullYear(),mo=d.getUTCMonth();if(m==='daily')return t;if(m==='weekly'){d.setUTCDate(d.getUTCDate()-((d.getUTCDay()+6)%7));return iso(d)}if(m==='monthly')return iso(new Date(Date.UTC(y,mo,1)));if(m==='quarterly')return iso(new Date(Date.UTC(y,Math.floor(mo/3)*3,1)));return iso(new Date(Date.UTC(y,0,1)))}
+function bBack(t,m){const d=ud(t);if(m==='daily')d.setUTCDate(d.getUTCDate()-1);else if(m==='weekly')d.setUTCDate(d.getUTCDate()-7);else if(m==='monthly')d.setUTCMonth(d.getUTCMonth()-1);else if(m==='quarterly')d.setUTCMonth(d.getUTCMonth()-3);else d.setUTCFullYear(d.getUTCFullYear()-1);return iso(d)}
+function bLab(t,m,lg){const d=ud(t),y=d.getUTCFullYear(),mo=d.getUTCMonth(),dd=d.getUTCDate();
+  if(m==='daily')return MS[mo]+' '+dd+(lg?', '+y:'');if(m==='weekly')return (lg?'Week of ':'')+MS[mo]+' '+dd+(lg?', '+y:'');
+  if(m==='monthly')return lg?MO[mo]+' '+y:MS[mo]+(mo===0?" '"+String(y).slice(2):'');if(m==='quarterly')return 'Q'+(Math.floor(mo/3)+1)+(lg?' '+y:'');return ''+y}
+function repData(){
+  const m=RP;let s0=bStart(today(),m);const bs=[];for(let i=0;i<RM[m].n;i++){bs.unshift({s:s0,lent:0,paid:0,int:0,nl:0,np:0});s0=bBack(s0,m)}
+  const ix={};bs.forEach((b,i)=>ix[b.s]=i);
+  D.forEach(p=>{p.debts.forEach(x=>{const k=ix[bStart(x.date,m)];if(k!=null){bs[k].lent+=x.amt;bs[k].nl++}});p.payments.forEach(x=>{const k=ix[bStart(x.date,m)];if(k!=null){bs[k].paid+=x.amt;bs[k].np++}});(p.interestLog||[]).forEach(x=>{const k=ix[bStart(x.date,m)];if(k!=null)bs[k].int+=x.amt})});
+  return bs;
+}
+function chartSVG(bs,m){
+  const W=640,H=250,L=46,R=8,T=12,B=30,pw=W-L-R,ph=H-T-B,n=bs.length,mx=Math.max(1,...bs.map(b=>Math.max(b.lent,b.paid)));
+  const e=Math.pow(10,Math.floor(Math.log10(mx))),f=mx/e,top=(f<=1?1:f<=2?2:f<=5?5:10)*e;
+  const sh=v=>v>=1e6?+(v/1e6).toFixed(1)+'M':v>=1e3?+(v/1e3).toFixed(1)+'k':String(Math.round(v));
+  let g='';for(let i=0;i<=4;i++){const y=T+ph-ph*i/4;g+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--bd)"/><text x="${L-6}" y="${y+4}" text-anchor="end" fill="var(--mut)" font-size="11">${sh(top*i/4)}</text>`}
+  const gw=pw/n,bw=Math.min(22,gw*.34);
+  bs.forEach((b,i)=>{const cx=L+gw*i+gw/2,hl=ph*b.lent/top,hp=ph*b.paid/top;
+    g+=`<rect class="bar2" x="${cx-bw-1}" y="${T+ph-hl}" width="${bw}" height="${hl}" rx="3" fill="var(--r)"><title>${bLab(b.s,m,1)} · Lent ${P(b.lent)}</title></rect><rect class="bar2" x="${cx+1}" y="${T+ph-hp}" width="${bw}" height="${hp}" rx="3" fill="var(--g)"><title>${bLab(b.s,m,1)} · Collected ${P(b.paid)}</title></rect>`;
+    if(n<=8||(n-1-i)%2===0)g+=`<text x="${cx}" y="${H-10}" text-anchor="middle" fill="var(--mut)" font-size="11">${bLab(b.s,m)}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Lent versus collected">${g}</svg>`;
+}
+function renderReports(){
+  const m=RP,bs=repData(),c=bs[bs.length-1],pv=bs[bs.length-2]||{lent:0,paid:0},tl={lent:0,paid:0,int:0,nl:0,np:0};bs.forEach(b=>{for(const k in tl)tl[k]+=b[k]});
+  const dl=(a,b)=>b?`<span style="color:${a>=b?'var(--g)':'var(--r)'}">${a>=b?'▲':'▼'} ${Math.abs(Math.round((a-b)/b*100))}%</span> vs ${RM[m].p}`:'';
+  const net=c.paid-c.lent,owing=D.filter(p=>bal(p)>0.005),od=D.filter(p=>st(p)==='overdue').length,pd=D.filter(p=>st(p)==='paid'&&(p.debts.length||p.payments.length)).length;
+  const top=[...owing].sort((a,b)=>bal(b)-bal(a)).slice(0,5),mxb=top.length?bal(top[0]):1;
+  $('rp').innerHTML=`<div class="chips">${Object.keys(RM).map(k=>`<button class="chip ${RP===k?'on':''}" onclick="setRP('${k}')">${k[0].toUpperCase()+k.slice(1)}</button>`).join('')}</div>
+  <div class="rk"><div class="rcd"><small>${RM[m].t} lent</small><b style="color:var(--r)">${P(c.lent)}</b><i>${c.nl} loan${c.nl===1?'':'s'} ${dl(c.lent,pv.lent)}</i></div>
+  <div class="rcd"><small>${RM[m].t} collected</small><b style="color:var(--g)">${P(c.paid)}</b><i>${c.np} payment${c.np===1?'':'s'} ${dl(c.paid,pv.paid)}</i></div>
+  <div class="rcd"><small>Interest charged</small><b>${P(c.int)}</b><i>from paid-off loans</i></div>
+  <div class="rcd"><small>Net cash flow</small><b style="color:${net>=0?'var(--g)':'var(--r)'}">${net<0?'−':''}${P(Math.abs(net))}</b><i>collected minus lent</i></div></div>
+  <div class="rcd rc"><div class="rh"><b>Lent vs collected</b><span class="lg"><i style="background:var(--g)"></i>Collected<i style="background:var(--r)"></i>Lent</span></div>${chartSVG(bs,m)}<div class="sub">Last ${RM[m].n} ${RM[m].u}</div></div>
+  <div class="rcd rc"><b>Details</b><table class="rt"><tr><th></th><th>Lent</th><th>Collected</th></tr>${[...bs].reverse().map(b=>`<tr><td>${bLab(b.s,m,1)}</td><td>${P(b.lent)}</td><td style="color:var(--g)">${P(b.paid)}</td></tr>`).join('')}<tr class="tt"><td>Total</td><td>${P(tl.lent)}</td><td>${P(tl.paid)}</td></tr></table></div>
+  <div class="rcd rc"><b>Right now</b><div class="rn"><div><b>${P(owing.reduce((s,p)=>s+bal(p),0)).replace('.00','')}</b><span>Outstanding</span></div><div><b>${owing.length}</b><span>Owing</span></div><div><b style="color:var(--r)">${od}</b><span>Overdue</span></div><div><b style="color:var(--g)">${pd}</b><span>Paid</span></div></div>
+  ${top.length?`<div class="sub">Highest balances</div>${top.map(p=>`<div class="tb"><span>${E(p.name)}</span><div><div style="width:${Math.max(4,bal(p)/mxb*100)}%"></div></div><b>${P(bal(p))}</b></div>`).join('')}`:'<div class="sub">Nobody owes you right now.</div>'}</div>`;
+}
+function setRP(m){RP=m;localStorage.setItem('dt_rp',m);renderReports()}
+function setView(v){VIEW=v;document.body.dataset.v=v;$('vb').style.display=v==='b'?'flex':'none';$('vr').style.display=v==='r'?'flex':'none';$('t1').classList.toggle('on',v==='b');$('t2').classList.toggle('on',v==='r');if(v==='r')renderReports()}
+function toggleHero(){const h=$('hero');h.classList.toggle('min');const mn=h.classList.contains('min');localStorage.setItem('dt_hero',mn?'1':'');$('hc').textContent=mn?'Show details':'Hide details'}
 function ask(title,text,back,fn){
   pending=fn;
   show(`<h3>${title}</h3><div class="mut" style="margin-top:6px">${text}</div>
@@ -666,6 +771,7 @@ function askTx(id,tid){ask('Delete this entry?','This will change the balance. I
 function askP(id){ask('Delete this borrower?','The record and all their transactions will be permanently removed.',`openDetail('${id}')`,()=>call('deleteBorrower',[id],'Borrower deleted',closeDlg))}
 try{D=JSON.parse(localStorage.getItem(CACHE)||'[]')}catch(e){D=[]}
 D=D.filter(p=>p&&p.balance!==undefined);
+if(localStorage.getItem('dt_hero')){$('hero').classList.add('min');$('hc').textContent='Show details'}
 if(D.length)render(1);
 if(cfg()){load();loadSet()}else openConnect();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
