@@ -103,6 +103,12 @@ label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 
 .top{padding-top:env(safe-area-inset-top,0px)}
 .paper{background:#fff;color:#111;border-radius:12px;padding:18px;font:14px/1.7 Georgia,serif;white-space:pre-wrap;margin-top:12px;max-height:45vh;overflow:auto}
 .paidbig{display:inline-flex;align-items:center;gap:10px;background:var(--g);color:#04210d;font-weight:900;font-size:28px;letter-spacing:.02em;padding:12px 24px;border-radius:16px;margin-top:14px;box-shadow:0 0 28px rgba(34,197,94,.45)}
+.doc{background:#fff;color:#111;font-family:"Times New Roman",Times,Georgia,serif;padding:26px 22px;border-radius:6px;margin-top:12px;max-height:52vh;overflow:auto;box-shadow:inset 0 0 0 1px #d4d4d8;font-size:14px;line-height:1.6}
+.dh{text-align:center}.dl{max-height:56px;max-width:60%;object-fit:contain}.dn{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px;margin-top:6px}
+.rule{border-top:3px solid #111;border-bottom:1px solid #111;height:5px;margin:12px 0 14px}
+.dt{text-align:center;font-size:19px;letter-spacing:.2em;margin:6px 0 2px;font-weight:700}.dref{text-align:center;font-size:11px;color:#555;margin-bottom:16px}
+.dc{margin-bottom:12px}.dch{font-weight:700}.dc p{margin:2px 0 0;text-align:justify}
+.dsig{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}.dsig .sl{border-top:1px solid #111;margin:6px 0 4px}.dsig span{font-size:12px;color:#555}.ds{height:56px;max-width:100%;object-fit:contain;display:block}
 a.btn{color:var(--g)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
@@ -121,7 +127,7 @@ a.btn{color:var(--g)}
 <button class="fab" onclick="openNew()" aria-label="New borrower"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 <dialog id="dlg"></dialog><div class="toast" id="toast"></div>
 <script>
-let D=[],filt='all',pending=null,PUR=['Cash','Load'],TMP=[],NB=null,CUR='',AGR=null,RC='',INK=false,SET={name:'',pay:'',agreement:''};
+let D=[],filt='all',pending=null,NB=null,CUR='',AGR=null,RC='',INK=false,LOGO,SET={name:'',pay:'',agreement:''};
 const $=id=>document.getElementById(id);
 const P=n=>'₱'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -148,7 +154,7 @@ function fit(){const v=window.visualViewport,d=$('dlg');if(!v)return;const top=v
 if(window.visualViewport){visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}
 function show(h){$('dlg').innerHTML='<div class="sheet"><button class="xb" onclick="closeDlg()" aria-label="Close">'+I('x')+'</button>'+h+'</div>';if(!$('dlg').open)$('dlg').showModal();fit();$('dlg').scrollTop=0}
 const closeDlg=()=>$('dlg').close();
-$('dlg').addEventListener('click',e=>{if(e.target===$('dlg'))closeDlg()});
+$('dlg').addEventListener('cancel',e=>e.preventDefault());
 document.addEventListener('focusin',e=>{if(e.target.closest&&e.target.closest('dialog'))setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:'smooth'}),350)});
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn,.chip,.fab');if(!b||reduce)return;const r=b.getBoundingClientRect(),s=document.createElement('span');s.className='rip';s.style.left=e.clientX-r.left+'px';s.style.top=e.clientY-r.top+'px';b.appendChild(s);setTimeout(()=>s.remove(),650)});
 function cnt(id,v){const el=$(id),from=el._v||0;el._v=v;if(from===v||reduce){el.textContent=P(v);return}
@@ -211,7 +217,7 @@ function saveConn(){
   const url=$('d1').value.trim(),key=$('d2').value.trim();
   if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url))return toast('The URL should end with /exec',1);
   if(!key)return toast('Enter your passcode.',1);
-  localStorage.setItem(CFGK,JSON.stringify({url,key}));closeDlg();load();loadPur();loadSet();
+  localStorage.setItem(CFGK,JSON.stringify({url,key}));closeDlg();load();loadSet();
 }
 function disconnect(){localStorage.removeItem(CFGK);localStorage.removeItem(CACHE);D=[];render();closeDlg();openConnect()}
 let dip=null;
@@ -219,17 +225,6 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;$('inst').st
 addEventListener('appinstalled',()=>{$('inst').style.display='none'});
 function doInstall(){if(!dip)return;dip.prompt();dip.userChoice.finally(()=>{dip=null;$('inst').style.display='none'})}
 function load(){call('getData',[])}
-function loadPur(){api('getPurposes').then(l=>{if(l&&l.length)PUR=l}).catch(()=>{})}
-function purSel(id){return `<select id="${id}" style="width:100%" onchange="$('${id}n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select><input id="${id}n" placeholder="New category name" style="display:none;margin-top:10px">`}
-function purVal(id){
-  const v=$(id).value;if(v!=='__new')return v;
-  const n=$(id+'n').value.trim();if(!n)return null;
-  if(!PUR.some(x=>x.toLowerCase()===n.toLowerCase())){PUR.push(n);api('savePurposes',[PUR]).catch(()=>{})}
-  return PUR.find(x=>x.toLowerCase()===n.toLowerCase());
-}
-function renderPur(){$('pl').innerHTML=TMP.map((x,i)=>`<span class="mt" style="margin:0 6px 8px 0;padding:5px 6px 5px 12px;font-size:13px">${E(x)} <button style="background:none;border:0;color:var(--mut);cursor:pointer;font-size:14px" onclick="delPur(${i})">✕</button></span>`).join('')}
-function addPur(){const v=$('pn').value.trim();if(!v)return;if(!TMP.some(x=>x.toLowerCase()===v.toLowerCase()))TMP.push(v);$('pn').value='';renderPur()}
-function delPur(i){if(TMP.length<2)return toast('Keep at least one category.',1);TMP.splice(i,1);renderPur()}
 function setFilter(f){filt=f;render(1)}
 
 function render(anim){
@@ -262,7 +257,7 @@ function pForm(id){
   <label>Address</label><input id="a3" value="${E(p.address)}">
   <label>Notes</label><textarea id="a5" rows="2">${E(p.notes)}</textarea>
   ${n?`<div class="g2"><div><label>Amount (₱) *</label><input id="a6" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="${E(p.amt||'')}"></div>
-  <div><label>What for?</label><select id="a7" style="width:100%" onchange="$('a7n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select></div></div><input id="a7n" placeholder="New category name" style="display:none;margin-top:10px">`:''}
+  <div><label>What for?</label><input id="a7" placeholder="e.g. cash, load, rice" autocomplete="off"></div></div>`:''}
   <div class="sw" onclick="tgl('a9','ib')"><span><b>Charge interest</b><br><span class="sub">Optional. You set the rate.</span></span><input type="checkbox" id="a9" ${on?'checked':''}><span class="tg"></span></div>
   <div class="ib ${on?'on':''}" id="ib"><div class="g2"><div><label>Interest rate (%)</label><input id="a10" type="number" min="0" step="0.01" inputmode="decimal" value="${on?p.rate:''}" placeholder="e.g. 5"></div>
   <div><label>Charged</label><select id="a11" style="width:100%">${[['once','One-time'],['week','Per week'],['month','Per month'],['year','Per year']].map(([v,l])=>`<option value="${v}" ${(p.per||'month')===v?'selected':''}>${l}</option>`).join('')}</select></div></div>
@@ -275,7 +270,7 @@ function pSave(id){
   const email=$('a8').value.trim();if(email&&!/^\S+@\S+\.\S+$/.test(email))return toast('That email looks invalid.',1);
   const on=$('a9').checked,rate=parseFloat($('a10').value);if(on&&!(rate>0))return toast('Enter an interest rate.',1);
   const p={id,name,phone:$('a2').value.trim(),address:$('a3').value.trim(),due:$('a4').value,notes:$('a5').value.trim(),email,rate:on?rate:0,per:$('a11').value};
-  if(!id){p.amt=parseFloat($('a6').value);if(!(p.amt>0))return toast('Enter the amount borrowed.',1);p.item=purVal('a7');if(p.item===null)return toast('Type the new category name.',1);NB=p;return agreeStep(p)}
+  if(!id){p.amt=parseFloat($('a6').value);if(!(p.amt>0))return toast('Enter the amount borrowed.',1);p.item=$('a7').value.trim();NB=p;return agreeStep(p)}
   call('saveBorrower',[p],'Details updated',()=>openDetail(id));
 }
 function hrow(x,i,id){
@@ -311,23 +306,25 @@ function confirmAll(){
   <div class="acts"><button class="btn" onclick="closeDlg()">Cancel</button><button class="btn p" onclick="sendAll()">Send now</button></div>`);
 }
 function sendAll(){closeDlg();call('remindAll',[],i=>i.sent+' email'+(i.sent===1?'':'s')+' sent'+(i.failed?', '+i.failed+' failed':''))}
-function openSettings(){callS('getSettings',[],c=>{
+function openSettings(){callS('getSettings',[],c=>{LOGO=undefined;
   show(`<h3>Settings</h3><div class="mut">Email and phone notification options.</div>
   <label>Your name (shown in emails)</label><input id="c1" value="${E(c.name)}" placeholder="e.g. Maria’s Store">
   <label>Payment details (shown in emails)</label><textarea id="c2" rows="2" placeholder="e.g. GCash 0917 000 0000 – Maria S.">${E(c.pay)}</textarea>
   <div class="sw" onclick="tgl('c3')"><span><b>Auto-email overdue borrowers</b><br><span class="sub">Checks every morning and emails anyone past their due date.</span></span><input type="checkbox" id="c3" ${c.auto?'checked':''}><span class="tg"></span></div>
   <div class="sw" onclick="tgl('c6')"><span><b>Thank-you emails</b><br><span class="sub">Automatically email borrowers when they make a payment or pay in full.</span></span><input type="checkbox" id="c6" ${c.thanks?'checked':''}><span class="tg"></span></div>
+  <label>Lender logo (shown on agreements)</label>
+  <div style="display:flex;align-items:center;gap:12px"><img id="lgp" src="${c.logo||''}" style="${c.logo?'':'display:none;'}max-height:56px;max-width:140px;background:#fff;border-radius:8px;padding:4px" alt=""><input type="file" id="lgf" accept="image/*" onchange="pickLogo(this)" style="flex:1"></div>
+  <button class="btn sm" style="margin-top:8px" onclick="clearLogo()">Remove logo</button>
   <label>Default agreement (used for every new borrower)</label><textarea id="c7" rows="9" style="font-family:Georgia,serif;font-size:14px">${E(c.agreement||DEF_AGR)}</textarea>
   <div class="sub" style="margin:6px 0">Words you can use: {{borrower}} {{lender}} {{amount}} {{purpose}} {{date}} {{due}} {{interest}} {{pay}}</div><button class="btn sm" onclick="$('c7').value=DEF_AGR">Reset to default</button>
-  <label>Loan categories</label><div id="pl" style="margin-top:2px"></div><div style="display:flex;gap:8px"><input id="pn" placeholder="Add a category, e.g. Rice" style="flex:1"><button class="btn" onclick="addPur()">Add</button></div>
   <label>Repeat overdue email every (days)</label><input id="c4" type="number" min="1" inputmode="numeric" value="${c.repeat}">
   <label>Phone push topic (optional)</label><input id="c5" autocapitalize="off" value="${E(c.topic)}" placeholder="e.g. maria-debts-48213">
   <div class="sub" style="margin-top:8px">Install the free <b>ntfy</b> app and subscribe to this topic for push alerts. You also get an email summary at ${E(c.owner)}, which the Gmail app notifies you about. Use a hard-to-guess topic.</div>
   <button class="btn" style="width:100%;margin-top:18px" onclick="openConnect()">Connection settings</button>
-  <div class="acts"><button class="btn" onclick="saveSet(1)">Send test</button><button class="btn p" onclick="saveSet()">Save</button></div>`);TMP=[...PUR];renderPur()},'Loading settings…')}
+  <div class="acts"><button class="btn" onclick="saveSet(1)">Send test</button><button class="btn p" onclick="saveSet()">Save</button></div>`);},'Loading settings…')}
 function saveSet(test){
-  const o={name:$('c1').value.trim(),pay:$('c2').value.trim(),auto:$('c3').checked,repeat:parseInt($('c4').value)||3,topic:$('c5').value.trim(),thanks:$('c6').checked,agreement:$('c7').value.trim()===DEF_AGR.trim()?'':$('c7').value.trim()};
-  callS('saveSettings',[o],()=>callS('savePurposes',[TMP],l=>{PUR=l;loadSet();if(test){callS('testNotify',[],()=>toast('Test sent. Check your phone.'),'Sending test…')}else{toast('Settings saved');closeDlg()}}),'Saving settings…');
+  const o={name:$('c1').value.trim(),pay:$('c2').value.trim(),auto:$('c3').checked,repeat:parseInt($('c4').value)||3,topic:$('c5').value.trim(),thanks:$('c6').checked,agreement:$('c7').value.trim()===DEF_AGR.trim()?'':$('c7').value.trim(),logo:LOGO};
+  callS('saveSettings',[o],()=>{loadSet();if(test){callS('testNotify',[],()=>toast('Test sent. Check your phone.'),'Sending test…')}else{toast('Settings saved');closeDlg()}},'Saving settings…');
 }
 function mth(){const v=$('b3').value;$('b4').style.display=v==='Other'?'block':'none';$('rc').style.display=v==='Cash'?'none':'block';$('rcl').textContent=v==='GCash'?'GCash receipt photo (required)':'Receipt photo (optional)'}
 function pickRc(inp){const f=inp.files[0];if(!f)return;readImg(f).then(u=>{RC=u;$('rcp').src=u;$('rcp').style.display='block'}).catch(e=>toast(e.message,1))}
@@ -338,15 +335,15 @@ function tForm(id,k){
   <label>Amount (₱) *</label><input id="b1" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="${pay&&b>0?b:''}">
   ${pay&&b>0?`<div style="margin-top:8px"><button class="chip" onclick="$('b1').value=${b}">Pay full balance</button></div>`:''}
   <div class="g2"><div><label>Date</label><input id="b2" type="date" value="${today()}"></div>
-  <div><label>${pay?'Payment method':'What for?'}</label>${pay?`<select id="b3" style="width:100%" onchange="mth()">${['Cash','GCash','Maya','Bank transfer','Check','Other'].map(o=>`<option>${o}</option>`).join('')}</select>`:`<select id="b3" style="width:100%" onchange="$('b3n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select>`}</div></div>
-  ${pay?'<input id="b4" placeholder="Specify (optional)" style="display:none;margin-top:10px"><div id="rc" style="display:none"><label id="rcl">Receipt photo</label><input type="file" id="b5" accept="image/*" onchange="pickRc(this)"><img id="rcp" style="display:none;width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-top:10px;border:1px solid var(--bd)"></div>':'<input id="b3n" placeholder="New category name" style="display:none;margin-top:10px">'}
+  <div><label>${pay?'Payment method':'What for?'}</label>${pay?`<select id="b3" style="width:100%" onchange="mth()">${['Cash','GCash','Maya','Bank transfer','Check','Other'].map(o=>`<option>${o}</option>`).join('')}</select>`:`<input id="b3" placeholder="e.g. cash, load, rice" autocomplete="off">`}</div></div>
+  ${pay?'<input id="b4" placeholder="Specify (optional)" style="display:none;margin-top:10px"><div id="rc" style="display:none"><label id="rcl">Receipt photo</label><input type="file" id="b5" accept="image/*" onchange="pickRc(this)"><img id="rcp" style="display:none;width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-top:10px;border:1px solid var(--bd)"></div>':''}
   <div class="acts"><button class="btn" onclick="openDetail('${id}')">Cancel</button><button class="btn p" onclick="tSave('${id}','${k}')">Save</button></div>`);
 }
 function tSave(id,k){
   const a=parseFloat($('b1').value);if(!(a>0))return toast('Enter a valid amount.',1);
   const was=bal(get(id));let nt;
   if(k==='p'){nt=$('b3').value==='Other'?($('b4').value.trim()||'Other'):$('b3').value;if(nt==='GCash'&&!RC)return toast('Please upload the GCash receipt.',1)}
-  else{nt=purVal('b3');if(nt===null)return toast('Type the new category name.',1)}
+  else{nt=$('b3').value.trim()}
   call('addTx',[id,k,$('b2').value||today(),a,nt,k==='p'&&nt!=='Cash'?RC:''],i=>{if(k!=='p')return 'Debt added';if(!i)return 'Payment recorded';const s=i.settled?'Paid in full. ':'Payment recorded. ';if(i.mailErr)return s+'Thank-you email failed: '+i.mailErr;return s+(i.mail?'Thank-you email sent':'')},()=>{openDetail(id);if(k==='p'&&a>=was&&was>0)burst()});
 }
 const DEF_AGR=`DEBT AGREEMENT
@@ -378,7 +375,7 @@ function loadSet(){api('getSettings').then(x=>{SET=x}).catch(()=>{})}
 function fillAgr(t,p){
   const ir=p.rate>0?`The Borrower will pay ${p.rate}% interest ${p.per==='once'?'one time':'every '+p.per} on the amount borrowed.`:'No interest will be charged.';
   const m={borrower:p.name,lender:SET.name||'the Lender',amount:P(p.amt||0),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,pay:SET.pay?'Payment details: '+SET.pay:''};
-  return t.replace(/\{\{(\w+)\}\}/g,(a,k)=>k in m?m[k]:a);
+  if(!m.pay)t=t.replace(/\{\{pay\}\}\n?/g,'');return t.replace(/\{\{(\w+)\}\}/g,(a,k)=>k in m?m[k]:a);
 }
 function sigPad(){return `<div style="position:relative"><canvas id="sg" width="600" height="220" style="width:100%;height:150px;background:#fff;border-radius:12px;touch-action:none;display:block"></canvas><div id="sgh" style="position:absolute;inset:0;display:grid;place-items:center;color:#9ca3af;pointer-events:none">Sign here with your finger</div></div><div style="margin-top:8px"><button class="btn sm" onclick="sigClear()">Clear signature</button></div>`}
 function sigClear(){const c=$('sg'),x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);INK=false;$('sgh').style.display='grid'}
@@ -410,9 +407,9 @@ function viewAgr(id){
     AGR=a?{...a,id}:null;
     if(!a)return editAgr(id);
     show(`<h3>Agreement</h3><div class="mut">${E(get(id).name)} · ${a.signedOn?'Signed on '+E(fmtD(a.signedOn)):'Not signed'}</div>
-    <div class="paper">${E(a.text)}</div>
-    <div class="sec">Borrower’s signature</div>${a.sig?`<img src="${a.sig}" style="background:#fff;border-radius:10px;width:100%;max-width:320px;margin-top:8px" alt="Signature">`:'<div class="sub" style="margin-top:6px">Not signed yet.</div>'}
-    <div class="acts"><button class="btn" onclick="openDetail('${id}')">Back</button><button class="btn p" onclick="editAgr('${id}')">Edit & sign</button></div>`);
+    ${paperHTML(a,get(id))}
+    <div class="acts"><button class="btn p" style="flex-basis:100%" onclick="dlAgr()">Download PDF</button></div>
+    <div class="acts" style="margin-top:8px"><button class="btn" onclick="openDetail('${id}')">Back</button><button class="btn" onclick="editAgr('${id}')">Edit & sign</button></div>`);
   },'Loading agreement…');
 }
 function editAgr(id){
@@ -427,6 +424,73 @@ function editAgr(id){
 }
 function saveAgr(id){const t=$('ag').value.trim();if(t.length<20)return toast('The agreement cannot be empty.',1);call('saveAgreement',[id,t,sigData()],'Agreement saved',()=>{AGR=null;openDetail(id)})}
 function viewRc(fid){callS('getReceipt',[fid],u=>show(`<h3>Receipt</h3><img src="${u}" style="width:100%;border-radius:12px;margin-top:12px" alt="Receipt"><div class="acts"><button class="btn" onclick="openDetail(CUR)">Back</button></div>`),'Loading receipt…')}
+function parseAgr(t){
+  const bl=t.replace(/\r/g,'').split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);let title='AGREEMENT';
+  if(bl.length&&bl[0].length<60&&!bl[0].includes('\n')&&bl[0]===bl[0].toUpperCase())title=bl.shift();
+  return{title,items:bl.map(b=>{const L=b.split('\n'),m=/^(\d+)\.\s+(.*)$/.exec(L[0]);return m?{h:m[1]+'. '+m[2],body:L.slice(1).join('\n').trim()}:{h:'',body:b}})};
+}
+function paperHTML(a,p){
+  const d=parseAgr(a.text),ln=SET.name||'';
+  return `<div class="doc"><div class="dh">${SET.logo?`<img src="${SET.logo}" class="dl" alt="">`:''}${ln?`<div class="dn">${E(ln)}</div>`:''}</div><div class="rule"></div>
+  <div class="dt">${E(d.title)}</div><div class="dref">Ref. No. ${E(p.id.toUpperCase())}</div>
+  ${d.items.map(i=>`<div class="dc">${i.h?`<div class="dch">${E(i.h)}</div>`:''}${i.body?`<p>${E(i.body).replace(/\n/g,'<br>')}</p>`:''}</div>`).join('')}
+  <div class="dsig"><div><div style="height:56px"></div><div class="sl"></div><b>${E(ln||'Lender')}</b><br><span>Lender</span></div>
+  <div>${a.sig?`<img src="${a.sig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(p.name)}</b><br><span>Borrower${a.signedOn?' · Signed '+E(fmtD(a.signedOn)):''}</span></div></div></div>`;
+}
+const loadImg=u=>new Promise(r=>{if(!u)return r(null);const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=u});
+async function makePDF(a,p){
+  const W=595,H=842,S=2.5,ML=58,CW=W-ML*2,TOP=54,BOT=64,LH=16.5,ref='Ref. No. '+p.id.toUpperCase();
+  const d=parseAgr(a.text),ln=SET.name||'',[logo,sig]=await Promise.all([loadImg(SET.logo),loadImg(a.sig)]);
+  const F=(z,b,i)=>`${i?'italic ':''}${b?'bold ':''}${z}px "Times New Roman",Times,Georgia,serif`;
+  const pages=[];let x,y;
+  const np=()=>{const c=document.createElement('canvas');c.width=W*S;c.height=H*S;x=c.getContext('2d');x.scale(S,S);x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#111';x.textAlign='left';pages.push(c);y=TOP};
+  const need=h=>{if(y+h>H-BOT)np()};
+  const wrap=(t,f)=>{x.font=f;const o=[];t.split('\n').forEach(par=>{const w=par.split(/\s+/).filter(Boolean);let l='';if(!w.length){o.push({t:'',last:1});return}w.forEach(wd=>{const tt=l?l+' '+wd:wd;if(x.measureText(tt).width>CW&&l){o.push({t:l,last:0});l=wd}else l=tt});o.push({t:l,last:1})});return o};
+  const para=t=>{const f=F(11),ls=wrap(t,f);ls.forEach(l=>{need(LH);x.font=f;const w=l.t.split(' ');if(!l.last&&w.length>1){const sp=(CW-x.measureText(w.join('')).width)/(w.length-1);let cx=ML;w.forEach(wd=>{x.fillText(wd,cx,y);cx+=x.measureText(wd).width+sp})}else x.fillText(l.t,ML,y);y+=LH})};
+  np();
+  if(logo){const k=Math.min(180/logo.width,56/logo.height),w=logo.width*k,h=logo.height*k;x.drawImage(logo,(W-w)/2,y,w,h);y+=h+12}
+  x.textAlign='center';
+  if(ln){x.font=F(12,1);try{x.letterSpacing='2px'}catch(e){}x.fillText(ln.toUpperCase(),W/2,y+10);try{x.letterSpacing='0px'}catch(e){}y+=26}
+  x.fillRect(ML,y,CW,2.4);x.fillRect(ML,y+5,CW,.8);y+=24;
+  x.font=F(20,1);try{x.letterSpacing='3px'}catch(e){}x.fillText(d.title,W/2,y+14);try{x.letterSpacing='0px'}catch(e){}y+=30;
+  x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText(ref,W/2,y+4);x.fillStyle='#111';x.textAlign='left';y+=28;
+  d.items.forEach(i=>{if(i.h){need(LH*3);x.font=F(11.5,1);x.fillText(i.h,ML,y);y+=LH}if(i.body)para(i.body);y+=8});
+  need(150);y+=22;const cw=(CW-40)/2,x2=ML+cw+40;
+  if(sig){const k=Math.min(cw/sig.width,54/sig.height);x.drawImage(sig,x2,y+54-sig.height*k,sig.width*k,sig.height*k)}
+  x.fillRect(ML,y+58,cw,.8);x.fillRect(x2,y+58,cw,.8);
+  x.font=F(11,1);x.fillText(ln||'Lender',ML,y+73);x.fillText(p.name,x2,y+73);
+  x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText('Lender',ML,y+86);x.fillText('Borrower'+(a.signedOn?' · Signed '+fmtD(a.signedOn):''),x2,y+86);
+  pages.forEach((c,i)=>{const g=c.getContext('2d');g.fillStyle='#777';g.fillRect(ML,H-48,CW,.5);g.font=F(9);g.textAlign='center';g.fillText('Page '+(i+1)+' of '+pages.length+'   ·   '+ref,W/2,H-34)});
+  const jp=pages.map(c=>{const b=atob(c.toDataURL('image/jpeg',.92).split(',')[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return{bytes:u,w:c.width,h:c.height}});
+  return buildPDF(jp,W,H);
+}
+function buildPDF(jp,W,H){
+  const enc=new TextEncoder(),parts=[],off=[];let len=0;
+  const push=b=>{const u=typeof b==='string'?enc.encode(b):b;parts.push(u);len+=u.length};
+  const obj=(n,b)=>{off[n]=len;push(n+' 0 obj\n'+b+'\nendobj\n')};
+  push('%PDF-1.4\n');const n=jp.length;
+  obj(1,'<</Type/Catalog/Pages 2 0 R>>');
+  obj(2,'<</Type/Pages/Kids ['+jp.map((_,i)=>(3+i*3)+' 0 R').join(' ')+']/Count '+n+'>>');
+  jp.forEach((j,i)=>{const pg=3+i*3,ct=pg+1,im=pg+2,cs='q '+W+' 0 0 '+H+' 0 0 cm /Im0 Do Q';
+    obj(pg,'<</Type/Page/Parent 2 0 R/MediaBox[0 0 '+W+' '+H+']/Resources<</XObject<</Im0 '+im+' 0 R>>>>/Contents '+ct+' 0 R>>');
+    obj(ct,'<</Length '+cs.length+'>>\nstream\n'+cs+'\nendstream');
+    off[im]=len;push(im+' 0 obj\n<</Type/XObject/Subtype/Image/Width '+j.w+'/Height '+j.h+'/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length '+j.bytes.length+'>>\nstream\n');push(j.bytes);push('\nendstream\nendobj\n')});
+  const total=3+n*3,xr=len;let t='xref\n0 '+total+'\n0000000000 65535 f \n';
+  for(let i=1;i<total;i++)t+=String(off[i]).padStart(10,'0')+' 00000 n \n';
+  push(t+'trailer\n<</Size '+total+'/Root 1 0 R>>\nstartxref\n'+xr+'\n%%EOF');
+  return new Blob(parts,{type:'application/pdf'});
+}
+function dlAgr(){
+  const p=get(AGR.id);busy(1,'Creating PDF…','Please wait.');
+  makePDF(AGR,p).then(bl=>{busy(0);const u=URL.createObjectURL(bl),a=document.createElement('a');a.href=u;a.download='Agreement - '+p.name.replace(/[^\w ]/g,'')+'.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);toast('PDF downloaded')}).catch(e=>{busy(0);toast('Could not create the PDF.',1)});
+}
+function readLogo(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{let m=300;
+  for(let i=0;i<6;i++){const k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));const g=c.getContext('2d');g.drawImage(im,0,0,c.width,c.height);
+   let u=c.toDataURL('image/png');if(u.length<=44000)return res(u);
+   g.globalCompositeOperation='destination-over';g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);u=c.toDataURL('image/jpeg',.82);if(u.length<=44000)return res(u);m=Math.round(m*.75)}
+  rej(new Error('That logo is too detailed. Try a simpler image.'))};im.onerror=()=>rej(new Error('Could not read that image.'));im.src=fr.result};fr.onerror=()=>rej(new Error('Could not read that file.'));fr.readAsDataURL(file)})}
+function pickLogo(inp){const f=inp.files[0];if(f)readLogo(f).then(u=>{LOGO=u;$('lgp').src=u;$('lgp').style.display='block'}).catch(e=>toast(e.message,1))}
+function clearLogo(){LOGO='';$('lgp').style.display='none';$('lgf').value=''}
 function ask(title,text,back,fn){
   pending=fn;
   show(`<h3>${title}</h3><div class="mut" style="margin-top:6px">${text}</div>
@@ -437,6 +501,6 @@ function askP(id){ask('Delete this borrower?','The record and all their transact
 try{D=JSON.parse(localStorage.getItem(CACHE)||'[]')}catch(e){D=[]}
 D=D.filter(p=>p&&p.balance!==undefined);
 if(D.length)render(1);
-if(cfg()){load();loadPur();loadSet()}else openConnect();
+if(cfg()){load();loadSet()}else openConnect();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script></body></html>
