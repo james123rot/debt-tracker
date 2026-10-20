@@ -101,6 +101,8 @@ label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 
 @keyframes sp{to{transform:rotate(360deg)}}
 .mt{display:inline-block;font-size:11px;font-weight:600;padding:1px 9px;border-radius:99px;background:var(--c2);border:1px solid var(--bd);color:var(--tx);margin-left:4px}
 .top{padding-top:env(safe-area-inset-top,0px)}
+.paper{background:#fff;color:#111;border-radius:12px;padding:18px;font:14px/1.7 Georgia,serif;white-space:pre-wrap;margin-top:12px;max-height:45vh;overflow:auto}
+.paidbig{display:inline-flex;align-items:center;gap:10px;background:var(--g);color:#04210d;font-weight:900;font-size:28px;letter-spacing:.02em;padding:12px 24px;border-radius:16px;margin-top:14px;box-shadow:0 0 28px rgba(34,197,94,.45)}
 a.btn{color:var(--g)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
@@ -119,14 +121,16 @@ a.btn{color:var(--g)}
 <button class="fab" onclick="openNew()" aria-label="New borrower"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
 <dialog id="dlg"></dialog><div class="toast" id="toast"></div>
 <script>
-let D=[],filt='all',pending=null,PUR=['Cash','Load'],TMP=[];
+let D=[],filt='all',pending=null,PUR=['Cash','Load'],TMP=[],NB=null,CUR='',AGR=null,RC='',INK=false,SET={name:'',pay:'',agreement:''};
 const $=id=>document.getElementById(id);
 const P=n=>'₱'+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const E=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 const sum=a=>a.reduce((s,x)=>s+x.amt,0);
-const tot=p=>sum(p.debts)+(p.interest||0);
-const bal=p=>Math.round((tot(p)-sum(p.payments))*100)/100;
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const fmtD=s=>{if(!s)return'';const a=s.split('-');return MO[+a[1]-1]+' '+(+a[2])+', '+a[0]};
+const tot=p=>p.activeDebt+(p.interest||0);
+const bal=p=>p.balance;
 const LBP={once:'one-time',week:'per week',month:'per month',year:'per year'};
 const st=p=>bal(p)<=0.005?'paid':(p.due&&p.due<today()?'overdue':(sum(p.payments)>0?'partial':'unpaid'));
 const LB={paid:'Paid',overdue:'Overdue',partial:'Partial',unpaid:'Unpaid'};
@@ -151,7 +155,7 @@ function cnt(id,v){const el=$(id),from=el._v||0;el._v=v;if(from===v||reduce){el.
   const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);el.textContent=P(from+(v-from)*e);if(k<1)requestAnimationFrame(f)})(t0)}
 function burst(){const c=document.createElement('div');c.className='burst';for(let i=0;i<30;i++){const s=document.createElement('i'),a=Math.random()*6.28,d=90+Math.random()*170;s.style.cssText=`--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-70}px;--c:${i%3?'#22c55e':i%2?'#fff':'#16a34a'};left:50%;top:45%`;c.appendChild(s)}document.body.appendChild(c);setTimeout(()=>c.remove(),1200)}
 
-const BL={saveBorrower:['Saving borrower…'],addTx:['Saving…','Updating the sheet and sending any email.'],deleteTx:['Deleting entry…'],deleteBorrower:['Deleting borrower…'],remindAll:['Sending emails…','This may take a few seconds. Please keep this page open.'],remindOne:['Sending email…','Please wait.']};
+const BL={saveBorrower:['Saving borrower…'],saveAgreement:['Saving agreement…'],addTx:['Saving…','Updating the sheet and sending any email.'],deleteTx:['Deleting entry…'],deleteBorrower:['Deleting borrower…'],remindAll:['Sending emails…','This may take a few seconds. Please keep this page open.'],remindOne:['Sending email…','Please wait.']};
 function busy(on,m,sub){
   document.querySelectorAll('.ov').forEach(e=>e.remove());if(!on)return;
   const el=document.createElement('div'),d=$('dlg').open;el.className='ov'+(d?'':' g');
@@ -207,7 +211,7 @@ function saveConn(){
   const url=$('d1').value.trim(),key=$('d2').value.trim();
   if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(url))return toast('The URL should end with /exec',1);
   if(!key)return toast('Enter your passcode.',1);
-  localStorage.setItem(CFGK,JSON.stringify({url,key}));closeDlg();load();loadPur();
+  localStorage.setItem(CFGK,JSON.stringify({url,key}));closeDlg();load();loadPur();loadSet();
 }
 function disconnect(){localStorage.removeItem(CFGK);localStorage.removeItem(CACHE);D=[];render();closeDlg();openConnect()}
 let dip=null;
@@ -230,9 +234,9 @@ function setFilter(f){filt=f;render(1)}
 
 function render(anim){
   const q=$('q').value.toLowerCase(),so=$('so').value;
-  const owing=D.filter(p=>bal(p)>0),lent=D.reduce((s,p)=>s+sum(p.debts),0),col=D.reduce((s,p)=>s+sum(p.payments),0);
+  const owing=D.filter(p=>bal(p)>0.005),lent=D.reduce((s,p)=>s+sum(p.debts),0),col=D.reduce((s,p)=>s+sum(p.payments),0),ti=D.reduce((s,p)=>s+(p.interest||0)+sum(p.interestLog||[]),0);
   cnt('s3',owing.reduce((s,p)=>s+bal(p),0));cnt('s1',lent);cnt('s2',col);
-  const tl=lent+D.reduce((s,p)=>s+(p.interest||0),0),rate=tl?Math.min(100,col/tl*100):0;$('rg').style.strokeDashoffset=163.4*(1-rate/100);$('rt').textContent=Math.round(rate)+'%';
+  const tl=lent+ti,rate=tl?Math.min(100,col/tl*100):0;$('rg').style.strokeDashoffset=163.4*(1-rate/100);$('rt').textContent=Math.round(rate)+'%';
   $('s4').textContent=owing.length?owing.length+(owing.length===1?' borrower owes':' borrowers owe')+' you':(D.length?'All settled':'No borrowers yet');
   const em=owing.filter(p=>p.email).length;$('mc').textContent=em?`Email reminders (${em})`:'Email reminders';
   const c={all:D.length,owing:owing.length,overdue:D.filter(p=>st(p)==='overdue').length,paid:D.filter(p=>st(p)==='paid').length};
@@ -241,15 +245,15 @@ function render(anim){
   const r=D.filter(p=>(p.name+p.phone+p.address).toLowerCase().includes(q)).filter(p=>filt==='all'||(filt==='owing'?bal(p)>0:st(p)===filt))
    .sort(so==='name'?(a,b)=>a.name.localeCompare(b.name):so==='due'?(a,b)=>dk(a)<dk(b)?-1:1:(a,b)=>bal(b)-bal(a));
   $('list').className=anim?'anim':'';
-  $('list').innerHTML=r.length?r.map((p,i)=>{const dt=tot(p),pc=dt?Math.min(100,sum(p.payments)/dt*100):0,d=dueTx(p);
+  $('list').innerHTML=r.length?r.map((p,i)=>{const dt=tot(p),pc=dt?Math.min(100,p.activePaid/dt*100):(sum(p.debts)?100:0),d=dueTx(p);
    return`<div class="item ${st(p)==='overdue'?'od':''}" style="--i:${Math.min(i,10)}" onclick="openDetail('${p.id}')"><div class="rt">${av(p.name)}<div class="mid"><b>${E(p.name)}</b><span class="sub">${E(p.phone||p.address||'No contact info')}${d?' · '+d:''}${p.interest>0?' · +'+P(p.interest)+' interest':''}</span></div><div class="rr"><b>${P(Math.max(bal(p),0))}</b><span class="pill ${st(p)}">${LB[st(p)]}</span></div></div><div class="bar"><div style="width:${pc}%"></div></div></div>`}).join(''):
    `<div class="empty">${I('bk')}<div>${D.length?'No borrowers match your search.':'No debts recorded yet.<br>Tap “New borrower” to add the first one.'}</div></div>`;
 }
 
-function openNew(){pForm()}
+function openNew(){NB=null;pForm()}
 function tgl(a,b){const c=$(a);c.checked=!c.checked;if(b)$(b).classList.toggle('on',c.checked)}
 function pForm(id){
-  const p=id?get(id):{},n=!id,on=p.rate>0;
+  const p=id?get(id):(NB||{}),n=!id,on=p.rate>0;
   show(`<h3>${n?'New borrower':'Edit details'}</h3><div class="mut">${n?'Add the person and what they borrowed.':'Update this borrower’s information.'}</div>
   <label>Full name *</label><input id="a1" value="${E(p.name)}" placeholder="e.g. Juan Dela Cruz" autocomplete="off">
   <div class="g2"><div><label>Phone</label><input id="a2" value="${E(p.phone)}" inputmode="tel" placeholder="09XX XXX XXXX"></div>
@@ -257,13 +261,13 @@ function pForm(id){
   <label>Email (for reminders)</label><input id="a8" type="email" inputmode="email" autocapitalize="off" value="${E(p.email)}" placeholder="name@gmail.com">
   <label>Address</label><input id="a3" value="${E(p.address)}">
   <label>Notes</label><textarea id="a5" rows="2">${E(p.notes)}</textarea>
-  ${n?`<div class="g2"><div><label>Amount (₱) *</label><input id="a6" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+  ${n?`<div class="g2"><div><label>Amount (₱) *</label><input id="a6" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="${E(p.amt||'')}"></div>
   <div><label>What for?</label><select id="a7" style="width:100%" onchange="$('a7n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select></div></div><input id="a7n" placeholder="New category name" style="display:none;margin-top:10px">`:''}
   <div class="sw" onclick="tgl('a9','ib')"><span><b>Charge interest</b><br><span class="sub">Optional. You set the rate.</span></span><input type="checkbox" id="a9" ${on?'checked':''}><span class="tg"></span></div>
   <div class="ib ${on?'on':''}" id="ib"><div class="g2"><div><label>Interest rate (%)</label><input id="a10" type="number" min="0" step="0.01" inputmode="decimal" value="${on?p.rate:''}" placeholder="e.g. 5"></div>
   <div><label>Charged</label><select id="a11" style="width:100%">${[['once','One-time'],['week','Per week'],['month','Per month'],['year','Per year']].map(([v,l])=>`<option value="${v}" ${(p.per||'month')===v?'selected':''}>${l}</option>`).join('')}</select></div></div>
   <div class="sub" style="margin-top:8px">Simple interest on each loan, added for every completed period since it was borrowed.</div></div>
-  <div class="acts"><button class="btn" onclick="${n?'closeDlg()':`openDetail('${id}')`}">Cancel</button><button class="btn p" onclick="pSave('${id||''}')">Save</button></div>`);
+  <div class="acts"><button class="btn" onclick="${n?'closeDlg()':`openDetail('${id}')`}">Cancel</button><button class="btn p" onclick="pSave('${id||''}')">${n?'Next: Agreement':'Save'}</button></div>`);
   if(matchMedia('(pointer:fine)').matches)setTimeout(()=>$('a1').focus(),60);
 }
 function pSave(id){
@@ -271,23 +275,31 @@ function pSave(id){
   const email=$('a8').value.trim();if(email&&!/^\S+@\S+\.\S+$/.test(email))return toast('That email looks invalid.',1);
   const on=$('a9').checked,rate=parseFloat($('a10').value);if(on&&!(rate>0))return toast('Enter an interest rate.',1);
   const p={id,name,phone:$('a2').value.trim(),address:$('a3').value.trim(),due:$('a4').value,notes:$('a5').value.trim(),email,rate:on?rate:0,per:$('a11').value};
-  if(!id){p.amt=parseFloat($('a6').value);if(!(p.amt>0))return toast('Enter the amount borrowed.',1);p.item=purVal('a7');if(p.item===null)return toast('Type the new category name.',1)}
-  call('saveBorrower',[p],id?'Details updated':'Borrower added',()=>id?openDetail(id):closeDlg());
+  if(!id){p.amt=parseFloat($('a6').value);if(!(p.amt>0))return toast('Enter the amount borrowed.',1);p.item=purVal('a7');if(p.item===null)return toast('Type the new category name.',1);NB=p;return agreeStep(p)}
+  call('saveBorrower',[p],'Details updated',()=>openDetail(id));
 }
-
+function hrow(x,i,id){
+  const lab=x.k==='d'?'Debt':x.k==='p'?'Payment':'Interest',col=x.k==='p'?'var(--g)':x.k==='d'?'var(--r)':'var(--tx)';
+  return `<div class="tx" style="animation-delay:${Math.min(i,10)*40}ms"><div><b>${lab}</b><br><span class="sub">${E(fmtD(x.date))}</span>${x.note?` <span class="mt">${E(x.note)}</span>`:''}${x.rc?` <button class="mt" style="cursor:pointer;color:var(--g);font:inherit;font-size:11px;font-weight:600" onclick="viewRc('${x.rc}')">View receipt</button>`:''}</div><div><b style="color:${col}">${x.k==='p'?'−':'+'}${P(x.amt)}</b><button class="x" onclick="askTx('${id}','${x.id}')" aria-label="Delete">${I('x')}</button></div></div>`;
+}
 function openDetail(id){
-  const p=get(id);if(!p)return closeDlg();
-  const t=[...p.debts.map(x=>({...x,k:'d'})),...p.payments.map(x=>({...x,k:'p'}))].sort((a,b)=>b.date.localeCompare(a.date));
-  const dt=tot(p),pc=dt?Math.min(100,sum(p.payments)/dt*100):0,b=bal(p),d=dueTx(p),ph=p.phone.replace(/[^\d+]/g,'');
-  const msg=encodeURIComponent(`Hi ${p.name}, a friendly reminder about your balance of ${P(b)}${p.due?' due on '+p.due:''}. Thank you!`);
+  const p=get(id);if(!p)return closeDlg();CUR=id;
+  const all=[...p.debts.map(x=>({...x,k:'d'})),...p.payments.map(x=>({...x,k:'p'})),...(p.interestLog||[]).map(x=>({...x,k:'i'}))].sort((a,b)=>b.date.localeCompare(a.date));
+  const cur=all.filter(x=>!x.settled),old=all.filter(x=>x.settled);
+  const dt=tot(p),pc=dt?Math.min(100,p.activePaid/dt*100):0,b=bal(p),d=dueTx(p),ph=p.phone.replace(/[^\d+]/g,''),paid=st(p)==='paid'&&all.length>0,ag=p.agr;
+  const msg=encodeURIComponent(`Hi ${p.name}, a friendly reminder about your balance of ${P(b)}${p.due?' due on '+fmtD(p.due):''}. Thank you!`);
   const acts=[ph?`<a class="btn sm" href="tel:${E(ph)}">${I('ph')}Call</a>`:'',ph&&b>0?`<a class="btn sm" href="sms:${E(ph)}?body=${msg}">${I('ms')}Text</a>`:'',p.email&&b>0?`<button class="btn sm" onclick="mailOne('${id}')">${I('mail')}Email reminder</button>`:''].join('');
   show(`<div class="hd">${av(p.name)}<div class="mid"><h3>${E(p.name)}</h3><span class="pill ${st(p)}">${LB[st(p)]}</span> <span class="sub">${d}</span></div></div>
   ${acts?`<div class="info">${acts}</div>`:''}
-  <div class="det sub">${p.phone?'Phone: '+E(p.phone):''}${p.email?'<br>Email: '+E(p.email):''}${p.address?'<br>Address: '+E(p.address):''}${p.due?'<br>Due: '+E(p.due):''}${p.notes?'<br>Notes: '+E(p.notes):''}${p.lastReminder?'<br>Last emailed: '+E(p.lastReminder):''}</div>
-  <div class="big" style="color:${b>0?'var(--tx)':'var(--g)'}">${P(Math.max(b,0))}</div>
-  <div class="sub">remaining of ${P(dt)} · paid ${P(sum(p.payments))}${p.interest>0?`<br>Includes ${P(p.interest)} interest (${p.rate}% ${LBP[p.per]})`:p.rate>0?`<br>Interest ${p.rate}% ${LBP[p.per]} · none accrued yet`:''}</div><div class="bar"><div style="width:${pc}%"></div></div>
-  <div class="acts"><button class="btn p" onclick="tForm('${id}','p')">Record payment</button><button class="btn" onclick="tForm('${id}','d')">Add debt</button></div>
-  <div class="sec">History</div>${t.map((x,i)=>`<div class="tx" style="animation-delay:${i*40}ms"><div><b>${x.k==='d'?'Debt':'Payment'}</b><br><span class="sub">${E(x.date)}</span>${x.note?` <span class="mt">${E(x.note)}</span>`:''}</div><div><b style="color:${x.k==='d'?'var(--r)':'var(--g)'}">${x.k==='d'?'+':'−'}${P(x.amt)}</b><button class="x" onclick="askTx('${id}','${x.id}')" aria-label="Delete">${I('x')}</button></div></div>`).join('')||'<div class="sub" style="padding-top:8px">No entries.</div>'}
+  <div class="det sub">${p.phone?'Phone: '+E(p.phone):''}${p.email?'<br>Email: '+E(p.email):''}${p.address?'<br>Address: '+E(p.address):''}${p.due?'<br>Due: '+E(fmtD(p.due)):''}${p.notes?'<br>Notes: '+E(p.notes):''}${p.lastReminder?'<br>Last emailed: '+E(fmtD(p.lastReminder)):''}</div>
+  ${paid?`<div class="paidbig">✓ FULLY PAID</div><div class="big" style="color:var(--g)">${P(0)}</div><div class="sub">Balance is reset. Past payments are kept below.</div>`
+  :`<div class="big">${P(Math.max(b,0))}</div><div class="sub">left to pay of ${P(dt)} · paid ${P(p.activePaid)}${p.interest>0?`<br>Includes ${P(p.interest)} interest (${p.rate}% ${LBP[p.per]})`:p.rate>0?`<br>Interest ${p.rate}% ${LBP[p.per]} · none yet`:''}</div><div class="bar"><div style="width:${pc}%"></div></div>`}
+  <div class="acts"><button class="btn p" onclick="tForm('${id}','p')"${paid?' disabled style="opacity:.4"':''}>Record payment</button><button class="btn" onclick="tForm('${id}','d')">${paid?'Borrow again':'Add debt'}</button></div>
+  <div class="sec">Agreement</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px"><span class="pill ${ag&&ag.signed?'paid':'overdue'}">${ag?(ag.signed?'Signed '+E(fmtD(ag.signedOn)):'Not signed'):'No agreement'}</span><button class="btn sm" onclick="viewAgr('${id}')">${ag?'View / Edit':'Create'}</button></div>
+  ${cur.length?`<div class="sec">History</div>${cur.map((x,i)=>hrow(x,i,id)).join('')}`:''}
+  ${old.length?`<div class="sec">Paid history</div><div style="opacity:.7">${old.map((x,i)=>hrow(x,i,id)).join('')}</div>`:''}
+  ${all.length?'':'<div class="sub" style="padding-top:8px">No entries.</div>'}
   <div class="acts"><button class="btn" onclick="pForm('${id}')">Edit</button><button class="btn rd" onclick="askP('${id}')">Delete</button></div>`);
 }
 function mailOne(id){call('remindOne',[id],i=>i.sent?'Reminder emailed to '+get(id).name:'Could not send the email',()=>openDetail(id))}
@@ -305,6 +317,8 @@ function openSettings(){callS('getSettings',[],c=>{
   <label>Payment details (shown in emails)</label><textarea id="c2" rows="2" placeholder="e.g. GCash 0917 000 0000 – Maria S.">${E(c.pay)}</textarea>
   <div class="sw" onclick="tgl('c3')"><span><b>Auto-email overdue borrowers</b><br><span class="sub">Checks every morning and emails anyone past their due date.</span></span><input type="checkbox" id="c3" ${c.auto?'checked':''}><span class="tg"></span></div>
   <div class="sw" onclick="tgl('c6')"><span><b>Thank-you emails</b><br><span class="sub">Automatically email borrowers when they make a payment or pay in full.</span></span><input type="checkbox" id="c6" ${c.thanks?'checked':''}><span class="tg"></span></div>
+  <label>Default agreement (used for every new borrower)</label><textarea id="c7" rows="9" style="font-family:Georgia,serif;font-size:14px">${E(c.agreement||DEF_AGR)}</textarea>
+  <div class="sub" style="margin:6px 0">Words you can use: {{borrower}} {{lender}} {{amount}} {{purpose}} {{date}} {{due}} {{interest}} {{pay}}</div><button class="btn sm" onclick="$('c7').value=DEF_AGR">Reset to default</button>
   <label>Loan categories</label><div id="pl" style="margin-top:2px"></div><div style="display:flex;gap:8px"><input id="pn" placeholder="Add a category, e.g. Rice" style="flex:1"><button class="btn" onclick="addPur()">Add</button></div>
   <label>Repeat overdue email every (days)</label><input id="c4" type="number" min="1" inputmode="numeric" value="${c.repeat}">
   <label>Phone push topic (optional)</label><input id="c5" autocapitalize="off" value="${E(c.topic)}" placeholder="e.g. maria-debts-48213">
@@ -312,26 +326,107 @@ function openSettings(){callS('getSettings',[],c=>{
   <button class="btn" style="width:100%;margin-top:18px" onclick="openConnect()">Connection settings</button>
   <div class="acts"><button class="btn" onclick="saveSet(1)">Send test</button><button class="btn p" onclick="saveSet()">Save</button></div>`);TMP=[...PUR];renderPur()},'Loading settings…')}
 function saveSet(test){
-  const o={name:$('c1').value.trim(),pay:$('c2').value.trim(),auto:$('c3').checked,repeat:parseInt($('c4').value)||3,topic:$('c5').value.trim(),thanks:$('c6').checked};
-  callS('saveSettings',[o],()=>callS('savePurposes',[TMP],l=>{PUR=l;if(test){callS('testNotify',[],()=>toast('Test sent. Check your phone.'),'Sending test…')}else{toast('Settings saved');closeDlg()}}),'Saving settings…');
+  const o={name:$('c1').value.trim(),pay:$('c2').value.trim(),auto:$('c3').checked,repeat:parseInt($('c4').value)||3,topic:$('c5').value.trim(),thanks:$('c6').checked,agreement:$('c7').value.trim()===DEF_AGR.trim()?'':$('c7').value.trim()};
+  callS('saveSettings',[o],()=>callS('savePurposes',[TMP],l=>{PUR=l;loadSet();if(test){callS('testNotify',[],()=>toast('Test sent. Check your phone.'),'Sending test…')}else{toast('Settings saved');closeDlg()}}),'Saving settings…');
 }
+function mth(){const v=$('b3').value;$('b4').style.display=v==='Other'?'block':'none';$('rc').style.display=v==='Cash'?'none':'block';$('rcl').textContent=v==='GCash'?'GCash receipt photo (required)':'Receipt photo (optional)'}
+function pickRc(inp){const f=inp.files[0];if(!f)return;readImg(f).then(u=>{RC=u;$('rcp').src=u;$('rcp').style.display='block'}).catch(e=>toast(e.message,1))}
+function readImg(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.72))};im.onerror=()=>rej(new Error('Could not read that image.'));im.src=fr.result};fr.onerror=()=>rej(new Error('Could not read that file.'));fr.readAsDataURL(file)})}
 function tForm(id,k){
-  const b=bal(get(id)),pay=k==='p';
+  RC='';const b=bal(get(id)),pay=k==='p';
   show(`<h3>${pay?'Record payment':'Add debt'}</h3><div class="mut">${E(get(id).name)} · balance ${P(Math.max(b,0))}</div>
   <label>Amount (₱) *</label><input id="b1" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="${pay&&b>0?b:''}">
   ${pay&&b>0?`<div style="margin-top:8px"><button class="chip" onclick="$('b1').value=${b}">Pay full balance</button></div>`:''}
   <div class="g2"><div><label>Date</label><input id="b2" type="date" value="${today()}"></div>
-  <div><label>${pay?'Payment method':'What for?'}</label>${pay?`<select id="b3" style="width:100%" onchange="$('b4').style.display=this.value==='Other'?'block':'none'">${['Cash','GCash','Maya','Bank transfer','Check','Other'].map(o=>`<option>${o}</option>`).join('')}</select>`:`<select id="b3" style="width:100%" onchange="$('b3n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select>`}</div></div>
-  ${pay?'':'<input id="b3n" placeholder="New category name" style="display:none;margin-top:10px">'}
-  <input id="b4" placeholder="Specify (optional)" style="display:none;margin-top:10px">
+  <div><label>${pay?'Payment method':'What for?'}</label>${pay?`<select id="b3" style="width:100%" onchange="mth()">${['Cash','GCash','Maya','Bank transfer','Check','Other'].map(o=>`<option>${o}</option>`).join('')}</select>`:`<select id="b3" style="width:100%" onchange="$('b3n').style.display=this.value==='__new'?'block':'none'">${PUR.map(o=>`<option>${E(o)}</option>`).join('')}<option value="__new">＋ Add new…</option></select>`}</div></div>
+  ${pay?'<input id="b4" placeholder="Specify (optional)" style="display:none;margin-top:10px"><div id="rc" style="display:none"><label id="rcl">Receipt photo</label><input type="file" id="b5" accept="image/*" onchange="pickRc(this)"><img id="rcp" style="display:none;width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-top:10px;border:1px solid var(--bd)"></div>':'<input id="b3n" placeholder="New category name" style="display:none;margin-top:10px">'}
   <div class="acts"><button class="btn" onclick="openDetail('${id}')">Cancel</button><button class="btn p" onclick="tSave('${id}','${k}')">Save</button></div>`);
 }
 function tSave(id,k){
   const a=parseFloat($('b1').value);if(!(a>0))return toast('Enter a valid amount.',1);
-  const was=bal(get(id));
-  let nt;if(k==='p')nt=$('b3').value==='Other'?($('b4').value.trim()||'Other'):$('b3').value;else{nt=purVal('b3');if(nt===null)return toast('Type the new category name.',1)}
-  call('addTx',[id,k,$('b2').value||today(),a,nt],i=>{if(k!=='p')return 'Debt added';if(!i||(!i.mail&&!i.mailErr))return 'Payment recorded';if(i.mailErr)return 'Payment saved. Thank-you email failed: '+i.mailErr;return i.mail==='paid'?'Paid in full. Thank-you email sent':'Payment recorded. Thank-you email sent'},()=>{openDetail(id);if(k==='p'&&a>=was&&was>0)burst()});
+  const was=bal(get(id));let nt;
+  if(k==='p'){nt=$('b3').value==='Other'?($('b4').value.trim()||'Other'):$('b3').value;if(nt==='GCash'&&!RC)return toast('Please upload the GCash receipt.',1)}
+  else{nt=purVal('b3');if(nt===null)return toast('Type the new category name.',1)}
+  call('addTx',[id,k,$('b2').value||today(),a,nt,k==='p'&&nt!=='Cash'?RC:''],i=>{if(k!=='p')return 'Debt added';if(!i)return 'Payment recorded';const s=i.settled?'Paid in full. ':'Payment recorded. ';if(i.mailErr)return s+'Thank-you email failed: '+i.mailErr;return s+(i.mail?'Thank-you email sent':'')},()=>{openDetail(id);if(k==='p'&&a>=was&&was>0)burst()});
 }
+const DEF_AGR=`DEBT AGREEMENT
+
+This agreement is made on {{date}} between {{lender}} (the "Lender") and {{borrower}} (the "Borrower").
+
+1. Amount borrowed
+The Lender gives the Borrower {{amount}} for {{purpose}}.
+
+2. Paying back
+The Borrower promises to pay back the full amount on or before {{due}}.
+
+3. Interest
+{{interest}}
+
+4. How to pay
+{{pay}}
+If the Borrower pays by GCash, the Borrower must send a photo of the receipt.
+
+5. Late payment
+If the Borrower does not pay on time, the Lender may send reminders by text or email.
+
+6. Records
+The Lender will write down every payment. The Borrower may ask to see these records at any time.
+
+7. Agreement
+Both sides have read this agreement, understand it, and agree to follow it.`;
+function loadSet(){api('getSettings').then(x=>{SET=x}).catch(()=>{})}
+function fillAgr(t,p){
+  const ir=p.rate>0?`The Borrower will pay ${p.rate}% interest ${p.per==='once'?'one time':'every '+p.per} on the amount borrowed.`:'No interest will be charged.';
+  const m={borrower:p.name,lender:SET.name||'the Lender',amount:P(p.amt||0),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,pay:SET.pay?'Payment details: '+SET.pay:''};
+  return t.replace(/\{\{(\w+)\}\}/g,(a,k)=>k in m?m[k]:a);
+}
+function sigPad(){return `<div style="position:relative"><canvas id="sg" width="600" height="220" style="width:100%;height:150px;background:#fff;border-radius:12px;touch-action:none;display:block"></canvas><div id="sgh" style="position:absolute;inset:0;display:grid;place-items:center;color:#9ca3af;pointer-events:none">Sign here with your finger</div></div><div style="margin-top:8px"><button class="btn sm" onclick="sigClear()">Clear signature</button></div>`}
+function sigClear(){const c=$('sg'),x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);INK=false;$('sgh').style.display='grid'}
+function sigInit(){
+  const c=$('sg'),x=c.getContext('2d');sigClear();x.lineWidth=4;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#111';
+  let dr=false;const pt=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+  c.onpointerdown=e=>{dr=true;c.setPointerCapture(e.pointerId);const[a,b]=pt(e);x.beginPath();x.moveTo(a,b);x.lineTo(a+.1,b+.1);x.stroke();INK=true;$('sgh').style.display='none'};
+  c.onpointermove=e=>{if(!dr)return;const[a,b]=pt(e);x.lineTo(a,b);x.stroke()};
+  c.onpointerup=c.onpointercancel=()=>{dr=false};
+}
+function sigData(){if(!INK)return'';const c=$('sg');let u=c.toDataURL('image/png');if(u.length>45000)u=c.toDataURL('image/jpeg',.6);return u}
+const AGTA='style="font-family:Georgia,serif;font-size:15px;line-height:1.5"';
+function agreeStep(p){
+  show(`<h3>Agreement</h3><div class="mut">Read it, edit the terms if you need to, then ${E(p.name)} signs. This is required before saving.</div>
+  <label>Agreement terms (editable)</label><textarea id="ag" rows="12" ${AGTA}>${E(fillAgr(SET.agreement||DEF_AGR,p))}</textarea>
+  <label>Borrower’s signature *</label>${sigPad()}
+  <div class="sw" onclick="tgl('agc')"><span><b>${E(p.name)} has read and agrees</b></span><input type="checkbox" id="agc"><span class="tg"></span></div>
+  <div class="acts"><button class="btn" onclick="pForm()">Back</button><button class="btn p" onclick="agreeSave()">Sign & save</button></div>`);
+  sigInit();
+}
+function agreeSave(){
+  const sig=sigData();if(!sig)return toast('A signature is required.',1);
+  if(!$('agc').checked)return toast('Please tick the box to agree.',1);
+  const t=$('ag').value.trim();if(t.length<20)return toast('The agreement cannot be empty.',1);
+  call('saveBorrower',[{...NB,agreement:{text:t,sig}}],'Borrower and agreement saved',()=>{NB=null;closeDlg()});
+}
+function viewAgr(id){
+  callS('getAgreement',[id],a=>{
+    AGR=a?{...a,id}:null;
+    if(!a)return editAgr(id);
+    show(`<h3>Agreement</h3><div class="mut">${E(get(id).name)} · ${a.signedOn?'Signed on '+E(fmtD(a.signedOn)):'Not signed'}</div>
+    <div class="paper">${E(a.text)}</div>
+    <div class="sec">Borrower’s signature</div>${a.sig?`<img src="${a.sig}" style="background:#fff;border-radius:10px;width:100%;max-width:320px;margin-top:8px" alt="Signature">`:'<div class="sub" style="margin-top:6px">Not signed yet.</div>'}
+    <div class="acts"><button class="btn" onclick="openDetail('${id}')">Back</button><button class="btn p" onclick="editAgr('${id}')">Edit & sign</button></div>`);
+  },'Loading agreement…');
+}
+function editAgr(id){
+  const p=get(id),has=AGR&&AGR.id===id,last=p.debts[p.debts.length-1]||{};
+  const t=has?AGR.text:fillAgr(SET.agreement||DEF_AGR,{...p,amt:p.activeDebt||sum(p.debts),item:last.note});
+  show(`<h3>${has?'Edit agreement':'New agreement'}</h3><div class="mut">Change the terms for ${E(p.name)}. A new signature is needed after changes.</div>
+  <label>Agreement terms</label><textarea id="ag" rows="12" ${AGTA}>${E(t)}</textarea>
+  <label>Borrower’s signature *</label>${sigPad()}
+  <div class="sub" style="margin-top:8px">Saving without a new signature clears the old one.</div>
+  <div class="acts"><button class="btn" onclick="${has?`viewAgr('${id}')`:`openDetail('${id}')`}">Cancel</button><button class="btn p" onclick="saveAgr('${id}')">Save</button></div>`);
+  sigInit();
+}
+function saveAgr(id){const t=$('ag').value.trim();if(t.length<20)return toast('The agreement cannot be empty.',1);call('saveAgreement',[id,t,sigData()],'Agreement saved',()=>{AGR=null;openDetail(id)})}
+function viewRc(fid){callS('getReceipt',[fid],u=>show(`<h3>Receipt</h3><img src="${u}" style="width:100%;border-radius:12px;margin-top:12px" alt="Receipt"><div class="acts"><button class="btn" onclick="openDetail(CUR)">Back</button></div>`),'Loading receipt…')}
 function ask(title,text,back,fn){
   pending=fn;
   show(`<h3>${title}</h3><div class="mut" style="margin-top:6px">${text}</div>
@@ -340,7 +435,8 @@ function ask(title,text,back,fn){
 function askTx(id,tid){ask('Delete this entry?','This will change the balance. It cannot be undone.',`openDetail('${id}')`,()=>call('deleteTx',[tid],'Entry deleted',()=>openDetail(id)))}
 function askP(id){ask('Delete this borrower?','The record and all their transactions will be permanently removed.',`openDetail('${id}')`,()=>call('deleteBorrower',[id],'Borrower deleted',closeDlg))}
 try{D=JSON.parse(localStorage.getItem(CACHE)||'[]')}catch(e){D=[]}
+D=D.filter(p=>p&&p.balance!==undefined);
 if(D.length)render(1);
-if(cfg()){load();loadPur()}else openConnect();
+if(cfg()){load();loadPur();loadSet()}else openConnect();
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script></body></html>
