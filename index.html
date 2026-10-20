@@ -108,6 +108,8 @@ label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:15px 
 .rule{border-top:3px solid #111;border-bottom:1px solid #111;height:5px;margin:12px 0 14px}
 .dt{text-align:center;font-size:19px;letter-spacing:.2em;margin:6px 0 2px;font-weight:700}.dref{text-align:center;font-size:11px;color:#555;margin-bottom:16px}
 .dc{margin-bottom:12px}.dch{font-weight:700}.dc p{margin:2px 0 0;text-align:justify}
+.dsl{display:flex;align-items:flex-end;gap:10px;margin:6px 0 14px}.dsl span{white-space:nowrap}.dsb{flex:1;max-width:260px;border-bottom:1px solid #111;height:52px;display:flex;align-items:flex-end}.dsb img{max-height:50px;max-width:100%;object-fit:contain;object-position:left bottom}
+.pgb{border-top:2px dashed #bbb;margin:30px 0 22px}.dc.hd{margin-bottom:2px;margin-top:8px}
 .dsig{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}.dsig .sl{border-top:1px solid #111;margin:0 0 4px}.dsig span{font-size:12px;color:#555}.ds{height:56px;max-width:100%;object-fit:contain;object-position:left bottom;display:block}
 a.btn{color:var(--g)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -318,7 +320,7 @@ function openSettings(){callS('getSettings',[],c=>{LOGO=undefined;LSIG=undefined
   <div style="display:flex;align-items:center;gap:12px"><img id="lgp" src="${c.logo||''}" style="${c.logo?'':'display:none;'}max-height:56px;max-width:140px;background:#fff;border-radius:8px;padding:4px" alt=""><input type="file" id="lgf" accept="image/*" onchange="pickLogo(this)" style="flex:1"></div>
   <button class="btn sm" style="margin-top:8px" onclick="clearLogo()">Remove logo</button>
   <label>Default agreement (used for every new borrower)</label><textarea id="c7" rows="9" style="font-family:Georgia,serif;font-size:14px">${E(c.agreement||DEF_AGR)}</textarea>
-  <div class="sub" style="margin:6px 0">Words you can use: {{borrower}} {{lender}} {{amount}} {{purpose}} {{date}} {{due}} {{interest}} {{pay}}</div><button class="btn sm" onclick="$('c7').value=DEF_AGR">Reset to default</button>
+  <div class="sub" style="margin:6px 0">Words filled in automatically: {{borrower}} {{lender}} {{amount}} {{purpose}} {{date}} {{due}} {{interest}} {{interest_amount}} {{total_amount}} {{payment_schedule}} {{pay}}. Signatures, signing dates, and {{agreement_number}} are added by the app. Put a line with --- on its own to start a new page (Terms and Conditions).</div><button class="btn sm" onclick="$('c7').value=DEF_AGR">Reset to default</button>
   <label>Repeat overdue email every (days)</label><input id="c4" type="number" min="1" inputmode="numeric" value="${c.repeat}">
   <label>Phone push topic (optional)</label><input id="c5" autocapitalize="off" value="${E(c.topic)}" placeholder="e.g. maria-debts-48213">
   <div class="sub" style="margin-top:8px">Install the free <b>ntfy</b> app and subscribe to this topic for push alerts. You also get an email summary at ${E(c.owner)}, which the Gmail app notifies you about. Use a hard-to-guess topic.</div>
@@ -352,32 +354,168 @@ const DEF_AGR=`DEBT AGREEMENT
 
 This agreement is made on {{date}} between {{lender}} (the "Lender") and {{borrower}} (the "Borrower").
 
-1. Amount borrowed
-The Lender gives the Borrower {{amount}} for {{purpose}}.
+1. Amount Borrowed
 
-2. Paying back
-The Borrower promises to pay back the full amount on or before {{due}}.
+The Lender agrees to lend the Borrower {{amount}} for {{purpose}}. The Borrower acknowledges receipt of the loan amount.
+
+2. Repayment Terms
+
+The Borrower promises to repay the loan on or before {{due}} according to the agreed payment schedule.
+
+Principal Amount: {{amount}}
+
+Total Interest: {{interest_amount}}
+
+Total Amount Payable: {{total_amount}}
+
+Payment Schedule: {{payment_schedule}}
 
 3. Interest
+
 {{interest}}
 
-4. How to pay
+Any interest or additional charges must be agreed upon by both parties and comply with applicable laws.
+
+4. How to Pay
+
 {{pay}}
-If the Borrower pays by GCash, the Borrower must send a photo of the receipt.
 
-5. Late payment
-If the Borrower does not pay on time, the Lender may send reminders by text or email.
+If the Borrower pays through GCash or bank transfer, the Borrower must send a screenshot or copy of the transaction receipt. The Lender shall verify and record the payment.
 
-6. Records
-The Lender will write down every payment. The Borrower may ask to see these records at any time.
+For cash payments, the Lender shall acknowledge receipt and record the amount paid.
+
+5. Late Payment
+
+If the Borrower fails to pay on time, the Lender may send reasonable reminders through text message, email, or another agreed communication channel.
+
+Any late-payment charges must be disclosed, agreed upon where required, and legally permissible.
+
+6. Payment Records
+
+The Lender shall maintain accurate records of the loan, interest, payments received, and outstanding balance. The Borrower may request to review these records at any reasonable time.
 
 7. Agreement
-Both sides have read this agreement, understand it, and agree to follow it.`;
+
+Both parties confirm that they have read and understood this Agreement and voluntarily agree to comply with its lawful provisions.
+
+8. Signatures
+
+Lender: {{lender}}
+
+Lender's Signature: {{lender_signature}}
+
+Date Signed: {{lender_signed_date}}
+
+Borrower: {{borrower}}
+
+Borrower's Signature: {{borrower_signature}}
+
+Date Signed: {{borrower_signed_date}}
+
+Witness (Optional): {{witness}}
+
+Witness Signature: {{witness_signature}}
+
+---
+
+TERMS AND CONDITIONS
+
+These Terms and Conditions form part of the Debt Agreement between {{lender}} (the "Lender") and {{borrower}} (the "Borrower").
+
+1. Acceptance of Terms
+
+By signing the Debt Agreement, both parties confirm that they have read, understood, and voluntarily accepted the terms and conditions governing the loan.
+
+2. Accuracy of Information
+
+Both parties agree to provide accurate information relevant to the loan. The Borrower shall notify the Lender of any significant changes to their contact information.
+
+3. Loan Repayment
+
+The Borrower is responsible for repaying the principal, agreed interest, and any other lawful charges specified in the Debt Agreement. Payments must follow the agreed schedule unless both parties approve a change in writing.
+
+4. Payment Confirmation
+
+Payments made through GCash or bank transfer must be supported by transaction details or a receipt. A submitted receipt does not by itself confirm successful payment. The Lender shall verify that the funds have been received before marking the payment as completed.
+
+5. Late or Missed Payments
+
+If the Borrower misses a payment, the Lender may send reasonable reminders and a written notice of the overdue amount. The parties may agree in writing to a revised payment schedule.
+
+Failure to pay may result in lawful collection action, subject to applicable laws and any enforceable provisions of the Agreement.
+
+6. Interest and Additional Charges
+
+Interest, penalties, and other charges must be disclosed in the Debt Agreement and comply with applicable laws. No undisclosed or unauthorized charges shall be imposed.
+
+7. Early Payment
+
+The Borrower may request to pay the loan before the due date. Any applicable adjustment to interest or other charges shall follow the Debt Agreement and applicable law.
+
+8. Amendments and Extensions
+
+Any extension, installment arrangement, or modification must be mutually agreed upon and documented in writing. Verbal discussions alone shall not automatically change the original payment schedule.
+
+9. Records and Receipts
+
+The Lender shall maintain a record of payments and the outstanding balance. The Borrower may request a statement of account and should retain payment receipts until the debt is fully settled.
+
+10. Privacy and Confidentiality
+
+Both parties shall handle personal and financial information responsibly. The Lender shall use the Borrower's information only for legitimate purposes related to the loan, its administration, communication, and lawful collection, subject to applicable privacy laws.
+
+The Borrower's personal information shall not be publicly disclosed to shame, threaten, or harass the Borrower.
+
+11. Default and Legal Remedies
+
+If the Borrower fails to fulfill a payment obligation, the Lender may exercise lawful remedies available under the Debt Agreement and applicable law.
+
+Nothing in these Terms and Conditions authorizes threats, harassment, public shaming, unlawful seizure of property, or other prohibited collection practices.
+
+12. Dispute Resolution
+
+Both parties agree to make a reasonable effort to resolve disagreements through good-faith discussion. If the dispute cannot be resolved, either party may seek the remedies available under the laws of the Republic of the Philippines.
+
+13. Severability
+
+If any provision of these Terms and Conditions is found to be unenforceable, the remaining provisions shall continue to apply to the extent permitted by law.
+
+14. Full Settlement
+
+Once the Borrower has paid all amounts lawfully due, the Lender shall update the records to show that the debt is fully paid. The Borrower may request written confirmation of full settlement.
+
+15. Governing Law
+
+These Terms and Conditions shall be governed by applicable laws of the Republic of the Philippines.
+
+16. Acknowledgment
+
+The Lender and Borrower acknowledge that these Terms and Conditions form part of their Debt Agreement and agree to comply with their lawful obligations.
+
+Lender's Name: {{lender}}
+
+Lender's Signature: {{lender_signature}}
+
+Date: {{lender_signed_date}}
+
+Borrower's Name: {{borrower}}
+
+Borrower's Signature: {{borrower_signature}}
+
+Date: {{borrower_signed_date}}
+
+Agreement Reference Number: {{agreement_number}}`;
 function loadSet(){api('getSettings').then(x=>{SET=x}).catch(()=>{})}
 function fillAgr(t,p){
+  const base=p.amt||0,dv={week:7,month:30,year:365}[p.per]||30;let ia=0;
+  const known=p.rate>0&&(p.per==='once'||p.due);
+  if(p.rate>0){if(p.per==='once')ia=base*p.rate/100;else if(p.due){const dd=Math.round((new Date(p.due+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5),n=Math.floor(dd/dv);ia=n>0?base*p.rate/100*n:0}}
   const ir=p.rate>0?`The Borrower will pay ${p.rate}% interest ${p.per==='once'?'one time':'every '+p.per} on the amount borrowed.`:'No interest will be charged.';
-  const m={borrower:p.name,lender:SET.fullName||SET.name||'the Lender',amount:P(p.amt||0),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,pay:SET.pay?'Payment details: '+SET.pay:''};
-  if(!m.pay)t=t.replace(/\{\{pay\}\}\n?/g,'');return t.replace(/\{\{(\w+)\}\}/g,(a,k)=>k in m?m[k]:a);
+  const m={borrower:p.name,lender:SET.fullName||SET.name||'the Lender',amount:P(base),purpose:p.item||'personal use',date:fmtD(today()),due:p.due?fmtD(p.due):'the agreed date',interest:ir,
+    interest_amount:p.rate>0&&!known?'Depends on how long the loan stays unpaid':P(ia),total_amount:p.rate>0&&!known?'Principal plus interest as it grows':P(base+ia),
+    payment_schedule:p.due?'One full payment on or before '+fmtD(p.due):'To be agreed by both parties',pay:SET.pay?'Payment details: '+SET.pay:''};
+  if(!m.pay)t=t.replace(/\{\{pay\}\}\n?/g,'');
+  return t.replace(/\{\{(\w+)\}\}/g,(a,k)=>k in m?m[k]:a).replace(/\n{3,}/g,'\n\n');
 }
 function sigPad(){return `<div style="position:relative"><canvas id="sg" width="600" height="220" style="width:100%;height:150px;background:#fff;border-radius:12px;touch-action:none;display:block"></canvas><div id="sgh" style="position:absolute;inset:0;display:grid;place-items:center;color:#9ca3af;pointer-events:none">Sign here with your finger</div></div><div style="margin-top:8px"><button class="btn sm" onclick="sigClear()">Clear signature</button></div>`}
 function sigClear(){const c=$('sg'),x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);INK=false;$('sgh').style.display='grid'}
@@ -392,7 +530,7 @@ function sigData(){if(!INK)return'';const c=$('sg');let u=c.toDataURL('image/png
 const AGTA='style="font-family:Georgia,serif;font-size:15px;line-height:1.5"';
 function agreeStep(p){
   show(`<h3>Agreement</h3><div class="mut">Read it, edit the terms if you need to, then ${E(p.name)} signs. This is required before saving.</div>
-  <label>Agreement terms (editable)</label><textarea id="ag" rows="12" ${AGTA}>${E(fillAgr(SET.agreement||DEF_AGR,p))}</textarea>
+  <label>Agreement terms (editable)</label><textarea id="ag" rows="16" ${AGTA}>${E(fillAgr(SET.agreement||DEF_AGR,p))}</textarea>
   <label>Borrower’s signature *</label>${sigPad()}
   <div class="sw" onclick="tgl('agc')"><span><b>${E(p.name)} has read and agrees</b></span><input type="checkbox" id="agc"><span class="tg"></span></div>
   <div class="acts"><button class="btn" onclick="pForm()">Back</button><button class="btn p" onclick="agreeSave()">Sign & save</button></div>`);
@@ -418,50 +556,72 @@ function editAgr(id){
   const p=get(id),has=AGR&&AGR.id===id,last=p.debts[p.debts.length-1]||{};
   const t=has?AGR.text:fillAgr(SET.agreement||DEF_AGR,{...p,amt:p.activeDebt||sum(p.debts),item:last.note});
   show(`<h3>${has?'Edit agreement':'New agreement'}</h3><div class="mut">Change the terms for ${E(p.name)}. A new signature is needed after changes.</div>
-  <label>Agreement terms</label><textarea id="ag" rows="12" ${AGTA}>${E(t)}</textarea>
+  <label>Agreement terms</label><textarea id="ag" rows="16" ${AGTA}>${E(t)}</textarea>
+  <button class="btn sm" style="margin-top:8px" onclick="loadStd('${id}')">Load standard agreement</button>
   <label>Borrower’s signature *</label>${sigPad()}
   <div class="sub" style="margin-top:8px">Saving without a new signature clears the old one.</div>
   <div class="acts"><button class="btn" onclick="${has?`viewAgr('${id}')`:`openDetail('${id}')`}">Cancel</button><button class="btn p" onclick="saveAgr('${id}')">Save</button></div>`);
   sigInit();
 }
+function loadStd(id){const p=get(id),last=p.debts[p.debts.length-1]||{};if(!confirm('Replace the text with the standard agreement?'))return;$('ag').value=fillAgr(SET.agreement||DEF_AGR,{...p,amt:p.activeDebt||sum(p.debts),item:last.note})}
 function saveAgr(id){const t=$('ag').value.trim();if(t.length<20)return toast('The agreement cannot be empty.',1);call('saveAgreement',[id,t,sigData()],'Agreement saved',()=>{AGR=null;openDetail(id)})}
 function viewRc(fid){callS('getReceipt',[fid],u=>show(`<h3>Receipt</h3><img src="${u}" style="width:100%;border-radius:12px;margin-top:12px" alt="Receipt"><div class="acts"><button class="btn" onclick="openDetail(CUR)">Back</button></div>`),'Loading receipt…')}
+const agrNo=p=>'DA-'+p.id.replace(/^b/,'').toUpperCase();
 function parseAgr(t){
   const bl=t.replace(/\r/g,'').split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);let title='AGREEMENT';
   if(bl.length&&bl[0].length<60&&!bl[0].includes('\n')&&bl[0]===bl[0].toUpperCase())title=bl.shift();
-  return{title,items:bl.map(b=>{const L=b.split('\n'),m=/^(\d+)\.\s+(.*)$/.exec(L[0]);return m?{h:m[1]+'. '+m[2],body:L.slice(1).join('\n').trim()}:{h:'',body:b}})};
+  return{title,items:bl.map(b=>{const sg=/^(.*?)\s*\{\{(lender|borrower|witness)_signature\}\}\s*$/.exec(b);if(sg&&!b.includes('\n'))return{sig:sg[2],label:sg[1]};const L=b.split('\n'),m=/^(\d+)\.\s+(.*)$/.exec(L[0]);return m?{h:m[1]+'. '+m[2],body:L.slice(1).join('\n').trim()}:{h:'',body:b}})};
+}
+function rtFill(t,a,p){const sd=a.signedOn?fmtD(a.signedOn):'____________',m={lender:SET.fullName||SET.name||'the Lender',borrower:p.name,lender_signed_date:sd,borrower_signed_date:sd,witness:'____________________',agreement_number:agrNo(p)};return t.replace(/\{\{(\w+)\}\}/g,(x,k)=>k in m?m[k]:x)}
+const parseDoc=(t,a,p)=>rtFill(t,a,p).replace(/\r/g,'').split(/\n\s*-{3,}\s*\n/).map(parseAgr);
+const hasSig=t=>/\{\{(lender|borrower)_signature\}\}/.test(t);
+function itemHTML(i,a){
+  if(i.sig){const im=i.sig==='lender'?SET.lsig:i.sig==='borrower'?a.sig:'';return `<div class="dsl"><span>${E(i.label)}</span><div class="dsb">${im?`<img src="${im}" alt="">`:''}</div></div>`}
+  return `<div class="dc${i.body?'':' hd'}">${i.h?`<div class="dch">${E(i.h)}</div>`:''}${i.body?`<p>${E(i.body).replace(/\n/g,'<br>')}</p>`:''}</div>`;
 }
 function paperHTML(a,p){
-  const d=parseAgr(a.text),ln=SET.name||'',lnm=SET.fullName||SET.name||'Lender';
-  return `<div class="doc"><div class="dh">${SET.logo?`<img src="${SET.logo}" class="dl" alt="">`:''}${ln?`<div class="dn">${E(ln)}</div>`:''}</div><div class="rule"></div>
-  <div class="dt">${E(d.title)}</div><div class="dref">Ref. No. ${E(p.id.toUpperCase())}</div>
-  ${d.items.map(i=>`<div class="dc">${i.h?`<div class="dch">${E(i.h)}</div>`:''}${i.body?`<p>${E(i.body).replace(/\n/g,'<br>')}</p>`:''}</div>`).join('')}
-  <div class="dsig"><div>${SET.lsig?`<img src="${SET.lsig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(lnm)}</b><br><span>Lender</span></div>
-  <div>${a.sig?`<img src="${a.sig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(p.name)}</b><br><span>Borrower${a.signedOn?' · Signed '+E(fmtD(a.signedOn)):''}</span></div></div></div>`;
+  const ln=SET.name||'',lnm=SET.fullName||SET.name||'Lender',parts=parseDoc(a.text,a,p);
+  const head=`<div class="dh">${SET.logo?`<img src="${SET.logo}" class="dl" alt="">`:''}${ln?`<div class="dn">${E(ln)}</div>`:''}</div><div class="rule"></div>`;
+  const old=`<div class="dsig"><div>${SET.lsig?`<img src="${SET.lsig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(lnm)}</b><br><span>Lender</span></div>
+  <div>${a.sig?`<img src="${a.sig}" class="ds" alt="Signature">`:'<div style="height:56px"></div>'}<div class="sl"></div><b>${E(p.name)}</b><br><span>Borrower${a.signedOn?' · Signed '+E(fmtD(a.signedOn)):''}</span></div></div>`;
+  return `<div class="doc">${parts.map((d,k)=>`${k?'<div class="pgb"></div>':''}${head}<div class="dt">${E(d.title)}</div><div class="dref">Agreement No. ${E(agrNo(p))}</div>${d.items.map(i=>itemHTML(i,a)).join('')}`).join('')}${hasSig(a.text)?'':old}</div>`;
 }
 const loadImg=u=>new Promise(r=>{if(!u)return r(null);const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src=u});
 async function makePDF(a,p){
-  const W=595,H=842,S=2.5,ML=58,CW=W-ML*2,TOP=54,BOT=64,LH=16.5,ref='Ref. No. '+p.id.toUpperCase();
-  const d=parseAgr(a.text),ln=SET.name||'',lnm=SET.fullName||SET.name||'Lender',[logo,sig,lsig]=await Promise.all([loadImg(SET.logo),loadImg(a.sig),loadImg(SET.lsig)]);
+  const W=595,H=842,S=2.5,ML=58,CW=W-ML*2,TOP=54,BOT=64,LH=16.5,ref='Agreement No. '+agrNo(p);
+  const ln=SET.name||'',lnm=SET.fullName||SET.name||'Lender',parts=parseDoc(a.text,a,p),[logo,sig,lsig]=await Promise.all([loadImg(SET.logo),loadImg(a.sig),loadImg(SET.lsig)]);
   const F=(z,b,i)=>`${i?'italic ':''}${b?'bold ':''}${z}px "Times New Roman",Times,Georgia,serif`;
   const pages=[];let x,y;
   const np=()=>{const c=document.createElement('canvas');c.width=W*S;c.height=H*S;x=c.getContext('2d');x.scale(S,S);x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#111';x.textAlign='left';pages.push(c);y=TOP};
   const need=h=>{if(y+h>H-BOT)np()};
   const wrap=(t,f)=>{x.font=f;const o=[];t.split('\n').forEach(par=>{const w=par.split(/\s+/).filter(Boolean);let l='';if(!w.length){o.push({t:'',last:1});return}w.forEach(wd=>{const tt=l?l+' '+wd:wd;if(x.measureText(tt).width>CW&&l){o.push({t:l,last:0});l=wd}else l=tt});o.push({t:l,last:1})});return o};
   const para=t=>{const f=F(11),ls=wrap(t,f);ls.forEach(l=>{need(LH);x.font=f;const w=l.t.split(' ');if(!l.last&&w.length>1){const sp=(CW-x.measureText(w.join('')).width)/(w.length-1);let cx=ML;w.forEach(wd=>{x.fillText(wd,cx,y);cx+=x.measureText(wd).width+sp})}else x.fillText(l.t,ML,y);y+=LH})};
-  np();
-  if(logo){const k=Math.min(180/logo.width,56/logo.height),w=logo.width*k,h=logo.height*k;x.drawImage(logo,(W-w)/2,y,w,h);y+=h+12}
-  x.textAlign='center';
-  if(ln){x.font=F(12,1);try{x.letterSpacing='2px'}catch(e){}x.fillText(ln.toUpperCase(),W/2,y+10);try{x.letterSpacing='0px'}catch(e){}y+=26}
-  x.fillRect(ML,y,CW,2.4);x.fillRect(ML,y+5,CW,.8);y+=24;
-  x.font=F(20,1);try{x.letterSpacing='3px'}catch(e){}x.fillText(d.title,W/2,y+14);try{x.letterSpacing='0px'}catch(e){}y+=30;
-  x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText(ref,W/2,y+4);x.fillStyle='#111';x.textAlign='left';y+=28;
-  d.items.forEach(i=>{if(i.h){need(LH*3);x.font=F(11.5,1);x.fillText(i.h,ML,y);y+=LH}if(i.body)para(i.body);y+=8});
-  need(150);y+=22;const cw=(CW-40)/2,x2=ML+cw+40;
-  const ds=(im,xx)=>{if(im){const k=Math.min(cw/im.width,54/im.height),h=im.height*k;x.drawImage(im,xx,y+61-h,im.width*k,h)}};ds(lsig,ML);ds(sig,x2);
-  x.fillRect(ML,y+58,cw,.8);x.fillRect(x2,y+58,cw,.8);
-  x.font=F(11,1);x.fillText(lnm,ML,y+73);x.fillText(p.name,x2,y+73);
-  x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText('Lender',ML,y+86);x.fillText('Borrower'+(a.signedOn?' · Signed '+fmtD(a.signedOn):''),x2,y+86);
+  const head=d=>{
+    np();
+    if(logo){const k=Math.min(180/logo.width,56/logo.height),w=logo.width*k,h=logo.height*k;x.drawImage(logo,(W-w)/2,y,w,h);y+=h+12}
+    x.textAlign='center';
+    if(ln){x.font=F(12,1);try{x.letterSpacing='2px'}catch(e){}x.fillText(ln.toUpperCase(),W/2,y+10);try{x.letterSpacing='0px'}catch(e){}y+=26}
+    x.fillRect(ML,y,CW,2.4);x.fillRect(ML,y+5,CW,.8);y+=24;
+    x.font=F(20,1);try{x.letterSpacing='3px'}catch(e){}x.fillText(d.title,W/2,y+14);try{x.letterSpacing='0px'}catch(e){}y+=30;
+    x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText(ref,W/2,y+4);x.fillStyle='#111';x.textAlign='left';y+=28;
+  };
+  parts.forEach(d=>{
+    head(d);
+    d.items.forEach(i=>{
+      if(i.sig){need(60);const im=i.sig==='lender'?lsig:i.sig==='borrower'?sig:null;x.font=F(11);x.fillStyle='#111';const lw=x.measureText(i.label).width,lx=ML+lw+10,ww=Math.min(260,CW-lw-12);
+        if(im){const k=Math.min(ww/im.width,42/im.height),h=im.height*k;x.drawImage(im,lx,y+44-h,im.width*k,h)}
+        x.fillText(i.label,ML,y+43);x.fillRect(lx,y+44,ww,.8);y+=60;return}
+      if(i.h){need(LH*3);x.font=F(11.5,1);x.fillText(i.h,ML,y);y+=LH}
+      if(i.body)para(i.body);y+=i.body?8:2;
+    });
+  });
+  if(!hasSig(a.text)){
+    need(150);y+=22;const cw=(CW-40)/2,x2=ML+cw+40;
+    const ds=(im,xx)=>{if(im){const k=Math.min(cw/im.width,54/im.height),h=im.height*k;x.drawImage(im,xx,y+61-h,im.width*k,h)}};ds(lsig,ML);ds(sig,x2);
+    x.fillRect(ML,y+58,cw,.8);x.fillRect(x2,y+58,cw,.8);
+    x.font=F(11,1);x.fillText(lnm,ML,y+73);x.fillText(p.name,x2,y+73);
+    x.font=F(9.5,0,1);x.fillStyle='#555';x.fillText('Lender',ML,y+86);x.fillText('Borrower'+(a.signedOn?' · Signed '+fmtD(a.signedOn):''),x2,y+86);
+  }
   pages.forEach((c,i)=>{const g=c.getContext('2d');g.fillStyle='#777';g.fillRect(ML,H-48,CW,.5);g.font=F(9);g.textAlign='center';g.fillText('Page '+(i+1)+' of '+pages.length+'   ·   '+ref,W/2,H-34)});
   const jp=pages.map(c=>{const b=atob(c.toDataURL('image/jpeg',.92).split(',')[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return{bytes:u,w:c.width,h:c.height}});
   return buildPDF(jp,W,H);
