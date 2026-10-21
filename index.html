@@ -132,12 +132,16 @@ body[data-v=r] .fab{display:none!important}
 .pgb{border-top:2px dashed #bbb;margin:30px 0 22px}
 .sgb{display:grid;grid-template-columns:1fr 1fr;gap:22px 28px;margin:16px 0 8px}.sgc{display:flex;flex-direction:column}.sgi{height:60px;display:flex;align-items:flex-end}.sgi img{max-height:58px;max-width:100%;object-fit:contain;object-position:left bottom}
 .sgc .sl{border-top:1px solid #111;margin:0 0 4px}.sgc span{font-size:12px;color:#555}
+.imc{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}.imc>div{min-width:0;flex:1}.imc select{width:46%;max-width:210px}
+.imr{display:flex;gap:10px;padding:10px 6px;border-bottom:1px solid var(--bd)}.imr.bad{background:rgba(239,68,68,.07)}.imb{flex:1;min-width:0}.imb>input{padding:8px 10px;font-size:15px;margin-bottom:6px}
+.imx{display:flex;gap:8px;align-items:center}.imx input{width:110px;margin:0;padding:8px 10px;font-size:15px}.imk{padding-top:8px}.imk input{width:22px;height:22px;padding:0;accent-color:var(--g)}
+.imlist{max-height:44vh;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--bd);border-radius:12px;margin-top:10px}
 .dsig{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:34px}.dsig .sl{border-top:1px solid #111;margin:0 0 4px}.dsig span{font-size:12px;color:#555}.ds{height:56px;max-width:100%;object-fit:contain;object-position:left bottom;display:block}
 a.btn{color:var(--g)}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="ld" id="ld"></div>
-<div class="top"><div class="w"><div class="logo"><i>₱</i>Debt Tracker</div><div style="display:flex;gap:8px;align-items:center"><button class="btn sm" id="inst" style="display:none" onclick="doInstall()">Install app</button><button class="btn hbtn" onclick="openSettings()" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="btn p sm nw" onclick="openNew()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New borrower</button></div></div></div>
+<div class="top"><div class="w"><div class="logo"><i>₱</i>Debt Tracker</div><div style="display:flex;gap:8px;align-items:center"><button class="btn sm" id="inst" style="display:none" onclick="doInstall()">Install app</button><button class="btn hbtn" onclick="openImport()" aria-label="Import borrowers" title="Import borrowers"><svg viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg></button><button class="btn hbtn" onclick="openSettings()" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="btn p sm nw" onclick="openNew()"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New borrower</button></div></div></div>
 <div class="tabs"><button class="tab on" id="t1" onclick="setView('b')">Borrowers</button><button class="tab" id="t2" onclick="setView('r')">Reports</button></div>
 <main id="vb">
 <div class="hero" id="hero"><div class="row1"><div><div class="lbl">Outstanding balance</div><div class="amt" id="s3">₱0.00</div><div class="sub" id="s4">&nbsp;</div></div>
@@ -269,7 +273,7 @@ function render(anim){if(VIEW==='r')renderReports();
   $('list').className=anim?'anim':'';
   $('list').innerHTML=r.length?r.map((p,i)=>{const dt=tot(p),pc=dt?Math.min(100,p.activePaid/dt*100):(sum(p.debts)?100:0),d=dueTx(p);
    return`<div class="item ${st(p)==='overdue'?'od':''}" style="--i:${Math.min(i,10)}" onclick="openDetail('${p.id}')"><div class="rt">${av(p.name)}<div class="mid"><b>${E(p.name)}</b><span class="sub">${E(p.phone||p.address||'No contact info')}${d?' · '+d:''}${p.interest>0?' · +'+P(p.interest)+' interest':''}</span></div><div class="rr"><b>${P(Math.max(bal(p),0))}</b><span class="pill ${st(p)}">${LB[st(p)]}</span></div></div><div class="bar"><div style="width:${pc}%"></div></div></div>`}).join(''):
-   `<div class="empty">${I('bk')}<div>${D.length?'No borrowers match your search.':'No debts recorded yet.<br>Tap “New borrower” to add the first one.'}</div></div>`;
+   `<div class="empty">${I('bk')}<div>${D.length?'No borrowers match your search.':'No debts recorded yet.<br>Tap “New borrower” to add one, or use the upload icon at the top to import a list.'}</div></div>`;
 }
 
 function openNew(){NB=null;pForm()}
@@ -763,6 +767,162 @@ function renderReports(){
 function setRP(m){RP=m;localStorage.setItem('dt_rp',m);renderReports()}
 function setView(v){VIEW=v;document.body.dataset.v=v;$('vb').style.display=v==='b'?'flex':'none';$('vr').style.display=v==='r'?'flex':'none';$('t1').classList.toggle('on',v==='b');$('t2').classList.toggle('on',v==='r');if(v==='r')renderReports()}
 function toggleHero(){const h=$('hero');h.classList.toggle('min');const mn=h.classList.contains('min');localStorage.setItem('dt_hero',mn?'1':'');$('hc').textContent=mn?'Show details':'Hide details'}
+const r2c=n=>Math.round(n*100)/100,nk=n=>String(n).toLowerCase().replace(/\s+/g,' ').trim();
+const FR=[['email',/mail/],['phone',/phone|mobile|cell|contact|tel|^cp|^no$|number$/],['paid',/paid|payment|bayad|bayar|collected/],['borrowed',/borrow|loan|principal|original|hiniram/],['rate',/interest|rate|percent|%/],['first',/first|given|fname/],['last',/last|surname|lname|family|apelyido/],['name',/name|borrower|debtor|customer|client|pangalan|person|nangutang|payee/],['address',/address|location|city|barangay|tirahan|residence/],['purpose',/purpose|reason|item|forwhat|whatfor/],['notes',/note|remark|comment|memo|detail|descr/],['due',/due|deadline|maturity/],['amount',/balance|amount|owed|debt|utang|total|outstanding|remaining|unpaid|kulang/]];
+function hdrField(h){const n=String(h||'').toLowerCase().replace(/[^a-z0-9%]/g,'');if(!n)return'';
+  if(/date|petsa/.test(n))return /due|deadline|maturity|pay/.test(n)?'due':'date';
+  if(/fullname|completename|borrowername|debtorname|customername|clientname/.test(n)||n==='name'||n==='names')return'name';
+  if(/balance|remaining|outstanding|unpaid|kulang|amountdue|totaldue|utang/.test(n))return'amount';
+  if(/borrow|hiniram|loan|principal|original/.test(n))return'borrowed';
+  for(const[f,re]of FR)if(re.test(n))return f;return''}
+const isEmail=x=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x);
+const isPhone=x=>/^\d{10,13}$/.test(String(x).replace(/[\s()+-]/g,''))&&!/[.,]/.test(x);
+function parseMoney(x){let t=String(x==null?'':x).trim();if(!t)return NaN;const neg=/^\(.*\)$/.test(t)||/^-/.test(t);t=t.replace(/[()\-%]/g,'').replace(/php|₱|pesos?|\$|^p(?=\s*\d)/ig,'').replace(/[,\s]/g,'');let k=1;if(/k$/i.test(t)){k=1000;t=t.slice(0,-1)}if(!/^\d*\.?\d+$/.test(t))return NaN;const v=parseFloat(t)*k;return neg?-v:v}
+const ymd=(y,m,d)=>(m<1||m>12||d<1||d>31||y<1990||y>2100)?'':y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+function parseDate(x,serial){const t=String(x==null?'':x).trim();if(!t)return'';let m;
+  if((m=/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/.exec(t)))return ymd(+m[1],+m[2],+m[3]);
+  if((m=/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})$/.exec(t))){let a=+m[1],b=+m[2],y=+m[3];if(y<100)y+=2000;return a>12?ymd(y,b,a):ymd(y,a,b)}
+  if((m=/^([A-Za-z]{3,9})\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})$/.exec(t))){const mo=MS.findIndex(s=>s.toLowerCase()===m[1].slice(0,3).toLowerCase())+1;return mo?ymd(+m[3],mo,+m[2]):''}
+  if((m=/^(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]{3,9})\.?,?\s+(\d{4})$/.exec(t))){const mo=MS.findIndex(s=>s.toLowerCase()===m[2].slice(0,3).toLowerCase())+1;return mo?ymd(+m[3],mo,+m[1]):''}
+  if(serial&&/^\d{5}(\.\d+)?$/.test(t)){const n=+t;if(n>20000&&n<80000)return new Date(Math.round((n-25569)*864e5)).toISOString().slice(0,10)}
+  return''}
+function normPhone(s){const d=String(s||'').replace(/[^\d+]/g,'');if(!d)return'';if(/^\+?63\d{10}$/.test(d))return'0'+d.replace(/^\+?63/,'');if(/^9\d{9}$/.test(d))return'0'+d;return d}
+function cellStr(v){if(v==null)return'';if(v instanceof Date){const d=new Date(v.getTime()+432e5);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}return String(v).trim()}
+function colType(vals){const v=vals.map(x=>String(x==null?'':x).trim()).filter(Boolean).slice(0,40);if(!v.length)return'empty';const c={email:0,phone:0,date:0,money:0,text:0};
+  v.forEach(x=>{if(isEmail(x))c.email++;else if(isPhone(x))c.phone++;else if(parseDate(x))c.date++;else if(!isNaN(parseMoney(x)))c.money++;else c.text++});
+  const b=Object.keys(c).sort((a,z)=>c[z]-c[a])[0];return c[b]/v.length>=.6?b:'mixed'}
+function parseDelim(t,d){const rows=[];let r=[],c='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else if(ch==='"')q=true;else if(ch===d){r.push(c);c=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);rows.push(r);r=[];c=''}else c+=ch}r.push(c);rows.push(r);return rows}
+function detectDelim(t){const L=t.split(/\r?\n/).filter(x=>x.trim()).slice(0,25);if(L.length<1)return null;let best=null,bs=0;
+  for(const d of[',','\t',';','|']){const cn=L.map(l=>l.split(d).length-1),cnt={};cn.forEach(n=>cnt[n]=(cnt[n]||0)+1);const m=+Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0];if(m<1)continue;const cov=cnt[m]/L.length;if(cov>=.7&&cov*m>bs){bs=cov*m;best=d}}return best}
+function freeLine(line){
+  let t=line.replace(/^\s*(\d+[.)]|[-•*])\s+/,'').trim(),em='',ph='',dt='',am='';
+  let m=/[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+/.exec(t);if(m){em=m[0];t=t.replace(em,' ')}
+  m=/(?:\+?63|0)?9\d{2}[\s-]?\d{3}[\s-]?\d{4}\b/.exec(t)||/\+?\d[\d\s-]{8,}\d/.exec(t);if(m&&String(m[0]).replace(/\D/g,'').length>=10&&String(m[0]).replace(/\D/g,'').length<=13){ph=m[0];t=t.replace(ph,' ')}
+  m=/\b\d{4}[-/]\d{1,2}[-/]\d{1,2}\b|\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b|\b[A-Za-z]{3,9}\.?\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4}\b/.exec(t);if(m){dt=m[0];t=t.replace(dt,' ')}
+  const nums=[...t.matchAll(/(?:₱|php\s*|p\s*)?\d[\d,]*(?:\.\d+)?\s*k?\b/ig)];if(nums.length){const l=nums[nums.length-1];am=l[0];t=t.slice(0,l.index)+' '+t.slice(l.index+l[0].length)}
+  const nm=t.replace(/\b(owes?|utang|pesos?|php|balance|amount|due|paid)\b/ig,' ').replace(/[-–—:,|=()]+/g,' ').replace(/\s+/g,' ').trim();
+  return[nm,ph,em,am,dt,''];
+}
+function textRows(text){
+  const tx=text.trim();
+  if(/^[\[{]/.test(tx)){try{return jsonRows(JSON.parse(tx))}catch(e){}}
+  const d=detectDelim(text);if(d)return parseDelim(text,d);
+  return[['Name','Phone','Email','Amount','Due date','Notes'],...text.split(/\r?\n/).filter(l=>l.trim()).map(freeLine)];
+}
+function jsonRows(j){
+  if(!Array.isArray(j)){const k=Object.keys(j).find(k=>Array.isArray(j[k]));if(k==null)throw new Error('No list found in that file.');j=j[k]}
+  if(j.length&&Array.isArray(j[0]))return j;
+  const keys=[];j.forEach(o=>Object.keys(o||{}).forEach(k=>{if(!keys.includes(k))keys.push(k)}));
+  return[keys,...j.map(o=>keys.map(k=>{const v=o[k];return v&&typeof v==='object'?JSON.stringify(v):v}))];
+}
+function toTable(rows){
+  rows=rows.map(r=>r.map(cellStr)).filter(r=>r.some(c=>c));if(!rows.length)return null;
+  const w=Math.max(...rows.map(r=>r.length));rows=rows.map(r=>{while(r.length<w)r.push('');return r});
+  let hi=-1,best=0;for(let i=0;i<Math.min(8,rows.length);i++){const sc=rows[i].filter(c=>c&&isNaN(parseMoney(c))&&hdrField(c)).length;if(sc>best){best=sc;hi=i}}
+  if(best>=2||(best===1&&hi===0))return{head:rows[hi],data:rows.slice(hi+1),hasH:true};
+  return{head:rows[0].map((_,i)=>'Column '+(i+1)),data:rows,hasH:false};
+}
+const FLD=[['skip','Ignore this column'],['name','Full name'],['first','First name'],['last','Last name'],['phone','Phone'],['email','Email'],['address','Address'],['amount','Amount owed (balance)'],['borrowed','Amount borrowed'],['paid','Amount already paid'],['date','Date borrowed'],['due','Due date'],['purpose','What for'],['notes','Notes'],['rate','Interest %']];
+function autoMap(t){
+  const w=t.head.length,map=Array(w).fill('skip'),used={},TF={email:'email',phone:'phone',date:'date',money:'amount'},EXP={amount:'money',borrowed:'money',paid:'money',rate:'money',phone:'phone',email:'email',date:'date',due:'date'};
+  for(let i=0;i<w;i++){
+    const ty=colType(t.data.map(r=>r[i]));let f=t.hasH?hdrField(t.head[i]):'';
+    if(f&&EXP[f]&&![EXP[f],'mixed','empty'].includes(ty)&&!((f==='date'||f==='due')&&ty==='money'))f=TF[ty]||'';
+    if(!f){if(ty==='email')f='email';else if(ty==='phone')f='phone';else if(ty==='date')f=used.date?'due':'date';else if(ty==='money')f=used.amount?'skip':'amount';else if(ty==='text')f=(!used.name&&!used.first)?'name':(!used.address?'address':'notes')}
+    if(used[f]&&f!=='skip')f='skip';if(f!=='skip'&&f)used[f]=1;map[i]=f||'skip';
+  }
+  if(!used.name&&!used.first&&!used.last){const i=map.findIndex((f,k)=>f==='skip'&&colType(t.data.map(r=>r[k]))==='text');if(i>=0)map[i]='name'}
+  return map;
+}
+function buildRecs(){
+  const t=IM.t,mp=IM.map,g=(r,f)=>{const i=mp.indexOf(f);return i<0?'':String(r[i]||'').trim()};
+  const names=new Set(D.map(p=>nk(p.name))),mine=new Set(),out=[];
+  t.data.forEach(r=>{
+    let name=g(r,'name');const fn=g(r,'first'),ln=g(r,'last');if(fn||ln)name=[fn,ln].filter(Boolean).join(' ');
+    name=name.replace(/\s+/g,' ').replace(/^[\s\-–—:,.]+|[\s\-–—:,]+$/g,'').trim();if(/^[^,\d]+,\s*[^,\d]+$/.test(name)){const pr=name.split(',');name=pr[1].trim()+' '+pr[0].trim()}if(!name)return;
+    const mo=f=>{const v=parseMoney(g(r,f));return isNaN(v)||v<=0?null:v};
+    const bal=mo('amount'),bw=mo('borrowed'),pd=mo('paid');let debt=0,paid=0;
+    if(bw!=null){debt=bw;paid=pd!=null?pd:(bal!=null&&bal<bw?bw-bal:0)}else if(bal!=null){debt=bal+(pd||0);paid=pd||0}
+    const rt=parseFloat(g(r,'rate').replace('%','')),em=g(r,'email');
+    const rec={name,phone:normPhone(g(r,'phone')),email:isEmail(em)?em.toLowerCase():'',address:g(r,'address'),due:parseDate(g(r,'due'),true),date:parseDate(g(r,'date'),true)||today(),notes:g(r,'notes'),purpose:g(r,'purpose'),rate:rt>0?rt:0,per:IM.per||'month',debt:r2c(debt),paid:r2c(paid)};
+    const k=nk(name);rec.dup=names.has(k)||mine.has(k);mine.add(k);rec.sel=!rec.dup&&name.split(' ').length>1&&rec.debt>0;out.push(rec);
+  });
+  return out;
+}
+const imOk=r=>r.name.trim().split(/\s+/).length>1&&r.debt>0;
+const imIs=r=>{const a=[];if(r.name.trim().split(/\s+/).length<2)a.push('Needs a full name (first and last)');if(!(r.debt>0))a.push('No amount');if(r.dup)a.push('Already in your list');return a.join(' · ')};
+let IM=null,IMR=[];
+function loadXLSX(){return window.XLSX?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=res;s.onerror=()=>rej(new Error('Could not load the Excel reader. Check your internet and try again.'));document.head.appendChild(s)})}
+const sheetRows=(wb,n)=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,cellDates:true,defval:''});
+async function fileRows(f){
+  const ext=(f.name.split('.').pop()||'').toLowerCase(),sig=new Uint8Array(await f.slice(0,2).arrayBuffer());
+  if(['xlsx','xls','xlsm','xlsb','ods'].includes(ext)||(sig[0]===80&&sig[1]===75)){
+    await loadXLSX();const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});IM.wb=wb;IM.sheet=wb.SheetNames.find(n=>sheetRows(wb,n).some(r=>r.some(c=>c!==''&&c!=null)))||wb.SheetNames[0];return sheetRows(wb,IM.sheet)}
+  return textRows((await f.text()).replace(/^\uFEFF/,''));
+}
+function openImport(){
+  IM={per:'month'};IMR=[];
+  show(`<h3>Import borrowers</h3><div class="mut" style="margin-top:6px">Bring in a list you already have. Excel (.xlsx, .xls), Google Sheets download, CSV, TXT, JSON, or just paste your list. The app finds the columns for you.</div>
+  <label>Choose a file</label><input type="file" id="imf" accept=".xlsx,.xls,.xlsm,.xlsb,.ods,.csv,.tsv,.txt,.json,text/*">
+  <label>Or paste your list here</label><textarea id="imt" rows="6" placeholder="Juan Dela Cruz, 09171234567, 1500&#10;Maria Santos 2000 due Dec 5, 2026"></textarea>
+  <div class="sub" style="margin-top:8px">Imported borrowers don’t have agreements yet. You can create one for each later.</div>
+  <div class="acts"><button class="btn" onclick="closeDlg()">Cancel</button><button class="btn p" onclick="imNext()">Next</button></div>`);
+}
+function imNext(){
+  const f=$('imf').files[0],tx=$('imt').value;if(!f&&!tx.trim())return toast('Choose a file or paste your list.',1);
+  $('ld').className='ld on';busy(1,'Reading your list…');IM.wb=null;
+  (f?fileRows(f):Promise.resolve(textRows(tx))).then(rows=>{
+    $('ld').className='ld';busy(0);const t=toTable(rows);if(!t||!t.data.length)return toast('No rows found in that list.',1);
+    IM.t=t;IM.map=autoMap(t);imMap();
+  }).catch(e=>{$('ld').className='ld';busy(0);toast(e.message||'Could not read that file.',1)});
+}
+function imSheet(n){IM.sheet=n;const t=toTable(sheetRows(IM.wb,n));if(!t||!t.data.length)return toast('That sheet is empty.',1);IM.t=t;IM.map=autoMap(t);imMap()}
+function imMap(){
+  const t=IM.t,sm=i=>t.data.slice(0,3).map(r=>r[i]).filter(Boolean).join(' · ');
+  show(`<h3>Match your columns</h3><div class="mut" style="margin-top:6px">${t.data.length} row${t.data.length===1?'':'s'} found. Check that each column is matched correctly.</div>
+  ${IM.wb&&IM.wb.SheetNames.length>1?`<label>Sheet</label><select id="ims" style="width:100%" onchange="imSheet(this.value)">${IM.wb.SheetNames.map(n=>`<option ${n===IM.sheet?'selected':''}>${E(n)}</option>`).join('')}</select>`:''}
+  <div style="margin-top:8px">${t.head.map((h,i)=>`<div class="imc"><div><b>${E(t.hasH?h:'Column '+(i+1))}</b><div class="sub" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${E(sm(i))||'(empty)'}</div></div><select onchange="IM.map[${i}]=this.value">${FLD.map(([v,l])=>`<option value="${v}" ${IM.map[i]===v?'selected':''}>${l}</option>`).join('')}</select></div>`).join('')}</div>
+  <label>If your file has an interest %, it is charged</label><select id="imper" style="width:100%" onchange="IM.per=this.value">${[['once','One-time'],['week','Per week'],['month','Per month'],['year','Per year']].map(([v,l])=>`<option value="${v}" ${IM.per===v?'selected':''}>${l}</option>`).join('')}</select>
+  <div class="acts"><button class="btn" onclick="openImport()">Back</button><button class="btn p" onclick="imReview()">Review</button></div>`);
+}
+function imReview(){
+  const m=IM.map;if(!m.includes('name')&&!m.includes('first')&&!m.includes('last'))return toast('Choose which column has the names.',1);
+  if(!m.includes('amount')&&!m.includes('borrowed'))return toast('Choose which column has the amount owed.',1);
+  IMR=buildRecs();if(!IMR.length)return toast('No borrowers found with those columns.',1);imShow();
+}
+function imShow(){
+  show(`<h3>Review and import</h3><div class="mut" style="margin-top:6px" id="imsum"></div>
+  <div class="imlist">${IMR.slice(0,500).map((r,i)=>`<div class="imr ${imOk(r)?'':'bad'}" id="imr${i}"><label class="imk"><input type="checkbox" ${r.sel?'checked':''} ${imOk(r)?'':'disabled'} onchange="IMR[${i}].sel=this.checked;imCount()"></label>
+  <div class="imb"><input value="${E(r.name)}" placeholder="Full name" oninput="imEd(${i},'name',this.value)"><div class="imx"><input value="${r.debt>r.paid?r2c(r.debt-r.paid):(r.debt>0?0:'')}" inputmode="decimal" placeholder="Amount" oninput="imEd(${i},'owed',this.value)"><span class="sub">${E([r.phone,r.due?'due '+fmtD(r.due):'',r.rate?r.rate+'%':''].filter(Boolean).join(' · '))}</span></div><div class="sub" style="color:var(--r)" id="imi${i}">${imIs(r)}</div></div></div>`).join('')}</div>
+  ${IMR.length>500?'<div class="sub" style="margin-top:6px">Showing the first 500 rows.</div>':''}
+  <div class="acts"><button class="btn" onclick="imMap()">Back</button><button class="btn p" id="imgo" onclick="imGo()">Import</button></div>`);
+  imCount();
+}
+function imCount(){const n=IMR.filter(r=>r.sel&&imOk(r)).length;$('imsum').textContent=IMR.length+' found · '+n+' selected. Fix any red rows or leave them out.';$('imgo').textContent='Import '+n}
+function imEd(i,f,v){
+  const r=IMR[i],was=imOk(r);
+  if(f==='name')r.name=v;else{const n=parseMoney(v);r.debt=isNaN(n)||n<0?0:r2c(n+r.paid)}
+  const ok=imOk(r),row=$('imr'+i),cb=row.querySelector('input[type=checkbox]');
+  $('imi'+i).textContent=imIs(r);row.classList.toggle('bad',!ok);cb.disabled=!ok;
+  if(!ok){r.sel=false;cb.checked=false}else if(!was&&!r.dup){r.sel=true;cb.checked=true}
+  imCount();
+}
+async function imGo(){
+  const pick=IMR.filter(r=>r.sel&&imOk(r));if(!pick.length)return toast('Nothing selected to import.',1);
+  const today0=today();let done=0;$('ld').className='ld on';
+  try{
+    for(let i=0;i<pick.length;i+=30){
+      const ch=pick.slice(i,i+30);busy(1,'Importing '+Math.min(i+30,pick.length)+' of '+pick.length+'…','Please keep this page open.');
+      D=await api('importBorrowers',[ch.map(r=>({name:r.name.replace(/\s+/g,' ').trim(),phone:r.phone,email:r.email,address:r.address,due:r.due,notes:r.notes,rate:r.rate,per:r.per,debts:[{date:r.date,amt:r.debt,note:r.purpose||'Imported'}],payments:r.paid>0?[{date:today0,amt:r.paid,note:'Imported'}]:[]}))]);
+      ch.forEach(r=>{r.sel=false;r.done=true});done+=ch.length;
+    }
+    $('ld').className='ld';busy(0);try{localStorage.setItem(CACHE,JSON.stringify(D))}catch(e){}render(1);
+    show(`<h3>Import complete</h3><div class="mut" style="margin-top:6px">${done} borrower${done===1?'':'s'} added with their balances.</div><div class="sub" style="margin-top:10px">They don’t have agreements yet. Open a borrower and tap <b>Create</b> under Agreement when you are ready.</div><div class="acts"><button class="btn p" onclick="closeDlg()">Done</button></div>`);
+  }catch(e){
+    $('ld').className='ld';busy(0);try{localStorage.setItem(CACHE,JSON.stringify(D))}catch(x){}render(1);
+    IMR.forEach(r=>{if(r.done)r.sel=false});toast((done?done+' imported, then stopped: ':'')+e.message,1);
+  }
+}
 function ask(title,text,back,fn){
   pending=fn;
   show(`<h3>${title}</h3><div class="mut" style="margin-top:6px">${text}</div>
